@@ -11,16 +11,16 @@ void movewheel2control(){//motor controlled by two joystick
 	motor[port10]=-vexRT[ch3];//setting speed of left motor
 }
 void movewheel(){//motor controlled by one joystick
-	float y = vexRT[ch2]/2;//joystick value
-	float x = vexRT[ch1]/2;
-	float left_motor;
-	float right_motor;
-	float power, st;
-	power = sqrt(x*x+y*y);
-	if(y>=0&&power!=0){
-		st = x * 100/power;
-		if(x>=0){
-			left_motor = power;
+	float y = vexRT[ch2]/2;//get joystick value
+	float x = vexRT[ch1]/2;//get joystick value
+	float left_motor;//variable for speed of left motor
+	float right_motor;//variable for speed of right motor
+	float power, st;//power for speed to distribute, st for steering
+	power = sqrt(x*x+y*y);//calculating power
+	if(y>=0&&power!=0){//check joystick position of y
+		st = x * 100/power;//set value for st
+		if(x>=0){//check joystick position of x
+			left_motor = power;//set speed
 			right_motor = (1-0.02*st)*power;
 		}
 		else{
@@ -44,26 +44,24 @@ void movewheel(){//motor controlled by one joystick
 		motor[port10] = 0;
 		motor[port1] = 0;
 	}
-	motor[port10] = -left_motor;
-	motor[port1] = right_motor;
+	motor[port10] = -left_motor;//set speed for left motor
+	motor[port1] = right_motor;//set speed for right motor
 }
 void moveclaw(){
-	if(vexRT[Btn5U] == 1){
-		motor[port7] = 100;
+	if(vexRT[Btn5U] == 1){//check of button 5U is pressed
+		motor[port7] = 100;//lift arm
 	}
-	else if(vexRT[Btn5D] == 1){
-		motor[port7] = -30;
+	else if(vexRT[Btn5D] == 1){//check of button 5D is pressed
+		motor[port7] = -30;//lower arm
 	}
-	else if(vexRT(Btn6U) == 1){
-		motor[port6] = 100;
+	else if(vexRT(Btn6U) == 1){//check of button 6U is pressed
+		motor[port6] = 100;//open claw
 	}
-	else if(vexRT(Btn6D) == 1){
-		motor[port6] = -100;
+	else if(vexRT(Btn6D) == 1){//check of button 6D is pressed
+		motor[port6] = -100;//close claw
 	}else{
-
-
-		motor[port6] = 0;
-		motor[port7] = 15;
+		motor[port6] = 5;//assure claw is shut tightly
+		motor[port7] = 15;//prevent arm from falling down due to gravity
 	}
 }
 
