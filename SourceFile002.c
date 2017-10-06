@@ -68,6 +68,11 @@ void moveclaw(){
 void lineFollow(float motor1, float motor10, float difference, float a){
 	if(vexRT[Btn8U]==1){//button for safety
 			difference = sensorValue(light_right)-sensorValue(light_left);//difference between two light sensor
+			//higer value -> darker color (less light is reflected)
+			//lower value -> lighter color (More light is reflected)
+			//white color:100 ~ 200
+			//black color:2300 ~ 3000
+			//The sensor returns valuee from 0~4095
 			motor[port1] = motor1+difference*a;//setting speed of motor, check if robot should turn
 			motor[port10] = motor10+difference*a;//setting speed of motor, check if robot should turn
 	}else{
@@ -82,7 +87,7 @@ task main(){
 	float motor10 = -25;//initializing left motor speed
 	float difference = 0;//difference between two sensor values
 	float a = 0.04//adjusting constant
-	
+
 	while(true){
 		lineFollow(motor1, motor10, difference, a);//line following function
 		moveclaw();//move claw and arm
