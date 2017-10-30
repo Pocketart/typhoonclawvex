@@ -1,3 +1,4 @@
 # Typhoon Claw Robotics Team
-readme
-Demo
+
+## About Us
+
