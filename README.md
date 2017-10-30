@@ -1,5 +1,6 @@
 # Typhoon Claw Robotics Team
 
+[Official Website](https://www.typhoonclaw.com "Our Official Website") - [Official Blog](https://blog.typhoonclaw.com "Our Official Blog") - [Facebook Page](https://www.facebook.com/TyphoonClawVEX/ "Our Facebook Page") - [Youtube Channel](https://www.youtube.com/channel/UCAdetZdsye6MSoaM9uEl5bA "Our Youtube Channel") - [Twitter](https://twitter.com/typhoonclaw "Our Twitter Handle") - [Instagram](https://www.instagram.com/typhoonclaw/ "Our Instagram Profile")
 
 ## About Us
 
@@ -21,4 +22,6 @@ In light of the Design Thinking process and hands-on experiences that are critic
 | Daniel Chen      | Darren Chiang      |                    |
 | Henry Tsai       | Peter Han          |                    |
 | Winnie Li        | Wharton Yeh        |                    |
+
+> Even though each member has a specific role or roles, every member is encouraged to help work on other aspects of development outside of their own roles with an interdiscliplinary approach.
 
