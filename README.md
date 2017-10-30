@@ -24,3 +24,5 @@ In light of the Design Thinking process and hands-on experiences that are critic
 | Winnie Li        | Wharton Yeh        |                    |
 
 > Even though each member has a specific role or roles, every member is encouraged to help work on other aspects of development outside of their own roles with an interdiscliplinary approach.
+
+## Our Plan
