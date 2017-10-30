@@ -11,13 +11,13 @@ In light of the Design Thinking process and hands-on experiences that are critic
 
 | Project Managers | Documentation | Promotional/Marketing | CAD Designer     | Resource Manager   |
 | ---------------- |-------------- | --------------------- | ---------------- | ------------------ |
-| Andrew Chen      | Shaun Cheon   | Jonathan Sun          | Cici Chen        | Mcgill Chen        |
+| Andrew Chen      | *Shaun Cheon* | *Jonathan Sun*        | Cici Chen        | *Mcgill Chen*      |
 | Ray Wen          | Jim Yeh       | Jim Yeh               | Paul Chen        |                    |
 |                  |               | Shaun Cheon           |                  |                    |
 
 | Programmers      | Builders           | Advisor/Supervisor |
 | ---------------- |------------------- | ------------------ |
-| Alwin Yen        | Stephanie Chang    | Johnson Ting       |
+| *Alwin Yen*      | *Stephanie Chang*  | *Johnson Ting*     |
 | Daniel Chen      | Darren Chiang      |                    |
 | Henry Tsai       | Peter Han          |                    |
 | Winnie Li        | Wharton Yeh        |                    |
