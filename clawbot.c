@@ -1,6 +1,3 @@
-#pragma config(Sensor, in1,    light_right,    sensorLineFollower)
-#pragma config(Sensor, in2,    light_left,     sensorLineFollower)
-#pragma config(Sensor, dgtl1,  armstop,        sensorTouch)
 #pragma config(Motor,  port1,           right,         tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port6,           claw,          tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port7,           arm,           tmotorVex393_MC29, openLoop)
@@ -33,12 +30,12 @@ void movewheel(){//motor controlled by one joystick
 		power*=-1;
 		st = x * 100/power;
 		if(x>=0){
-			left_motor = power;
-			right_motor = (1+0.02*st)*power;
+			left_motor = (1+0.02*st)*power;
+			right_motor = power;
 		}
 		else{
-			right_motor = power;
-			left_motor = (1-0.02*st)*power;
+			right_motor = (1-0.02*st)*power;
+			left_motor = power;
 		}
 	}
 	if(x==0&&y==0){
@@ -48,11 +45,12 @@ void movewheel(){//motor controlled by one joystick
 	motor[port10] = -left_motor;//set speed for left motor
 	motor[port1] = right_motor;//set speed for right motor
 }
+
 void moveclaw(){
 	if(vexRT[Btn5U] == 1){//check of button 5U is pressed
-		motor[port7] = (sensorValue(armstop)==0)?100:0;//lift arm if it does not exceed limit
+		motor[port7] = 100;//lift arm if it does not exceed limit
 	}
-	if(vexRT[Btn5D] == 1){//check of button 5D is pressed
+	else if(vexRT[Btn5D] == 1){//check of button 5D is pressed
 		motor[port7] = -30;//lower arm
 	}
 	else if(vexRT(Btn6U) == 1){//check of button 6U is pressed
@@ -62,12 +60,12 @@ void moveclaw(){
 		motor[port6] = -100;//close claw
 	}else{
 		motor[port6] = 5;//assure claw is shut tightly
-		motor[port7] = (sensorValue(armstop)==0)?15:0;//prevent arm from falling down due to gravity
+		motor[port7] = 15;//prevent arm from falling down due to gravity
 	}
 }
 
 void lineFollow(float motor1, float motor10, float difference, float a){
-	if(vexRT[Btn8U]==1){//button for safety
+	if(sensorvalue(armstop)==1){//button for safety
 			difference = sensorValue(light_right)-sensorValue(light_left);//difference between two light sensor
 			motor[port1] = motor1+difference*a;//setting speed of motor, check if robot should turn
 			motor[port10] = motor10+difference*a;//setting speed of motor, check if robot should turn
@@ -77,15 +75,21 @@ void lineFollow(float motor1, float motor10, float difference, float a){
 	}
 }
 
+void testStraight(){
+	motor[port1]=vexRT[ch2];
+	motor[port10]=-vexRT[ch2];
+}
+
 task main(){
 	// variable initializing for line following mechanism
+	/*
 	float motor1 = 25;//initializing right motor speed
 	float motor10 = -25;//initializing left motor speed
 	float difference = 0;//difference between two sensor values
-	float a = 0.04//adjusting constant
-
+	float a = -0.03325//adjusting constant
+	*/
 	while(true){
-		lineFollow(motor1, motor10, difference, a);//line following function
-		moveclaw();//move claw and arm
+		moveclaw();
+		movewheel();
 	}
 }
