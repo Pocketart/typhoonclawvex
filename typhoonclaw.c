@@ -12,9 +12,9 @@
 //////////////////////////////////////////////////////////PARAMETER///////////////////////////////////////////////////////////////////
 
 //PID CONSTANTS
-double straight_p = 0.1; 														//P constant for Straight_PID 
-double default_pid_straight = 100; 												//Default motor value for PID_Straight  
-double default_pid_turn = 100; 													//Default motor value for PID_Turn
+double straight_p = 0.1;					//P constant for Straight_PID 
+double default_pid_straight = 100;			//Default motor value for PID_Straight  
+double default_pid_turn = 100; 				//Default motor value for PID_Turn
 
 //Bottom claw motor values
 int bottom_out = 100; 
@@ -40,13 +40,17 @@ void striaght(double t){
 //PID_Turn
 void turn(double degree){
 	sensorValue[gyro] = 0;
-	if (degree > 0){ 															//Turn right
+	if (degree > 0){
+		//Turn right
+
 		while(sensorValue[gyro] <= degree){
 			motor[drive_right] = -1*default_pid_turn;
 			motor[drive_left] = default_pid_turn;
 		}
 	}
-	else{ 																		//Turn left
+	else{ 									
+		//Turn left		
+
 		while(sensorValue[gyro] >= degree){
 			motor[drive_right] = default_pid_turn;
 			motor[drive_left] = -1*default_pid_turn;
@@ -63,13 +67,13 @@ void motion(){																	//Motor controlled by one joystick
 	//Change to left 2017/11/10
 	y*=0.9;
 	x*=0.9;
-	float left_motor;															//Variable for speed of left motor
-	float right_motor;															//Variable for speed of right motor
-	float power, st;															//Power for speed to distribute, st for steering
-	power = sqrt(x*x+y*y);														//Calculating power
-	if(y>=0&&power!=0){															//Check joystick position of y
-		st = x * 100/power														//Set value for st
-		if(x>=0){																//Check joystick position of x
+	float left_motor;							//Variable for speed of left motor
+	float right_motor;							//Variable for speed of right motor
+	float power, st;							//Power for speed to distribute, st for steering
+	power = sqrt(x*x+y*y);						//Calculating power
+	if(y>=0&&power!=0){							//Check joystick position of y
+		st = x * 100/power						//Set value for st
+		if(x>=0){								//Check joystick position of x
 			left_motor = power;//Set speed
 			right_motor = (1-0.02*st)*power;
 		}
@@ -94,20 +98,20 @@ void motion(){																	//Motor controlled by one joystick
 		motor[drive_left] = 0;
 		motor[drive_right] = 0;
 	}
-	motor[drive_left] = left_motor;												//Set speed for left motor
-	motor[drive_right] = right_motor;											//Set speed for right motor
+	motor[drive_left] = left_motor;				//Set speed for left motor
+	motor[drive_right] = right_motor;			//Set speed for right motor
 }
 
 /////////////////////////////////////////////////////BOTTOM CLAW//////////////////////////////////////////////////////////////////////
 
 void moveBottomClaw(){
-	if(vexRT[Btn6UXmtr2]==1){													//Move bottom claw out
+	if(vexRT[Btn6UXmtr2]==1){					//Move bottom claw out
 		motor[bottom_left]=bottom_out; 
 		motor[bottom_right]=bottom_out;
-	}else if(vexRT[Btn6DXmtr2]==1){												//Move bottom claw in
+	}else if(vexRT[Btn6DXmtr2]==1){				//Move bottom claw in
 		motor[bottom_left]=bottom_in; 
 		motor[bottom_right]=bottom_in;
-	}else{																		//Stop bottom claw
+	}else{										//Stop bottom claw
 		motor[bottom_left]=0; 
 		motor[bottom_right]=0;
 	}
