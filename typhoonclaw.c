@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////PARAMETER///////////////////////////////////////////////////////////////////
 
 //PID CONSTANTS
-float straight_p = 0.1;					//P constant for Straight_PID
+float straight_p = 4;					//P constant for Straight_PID
 float default_pid_straight = 100;			//Default motor value for PID_Straight
 float default_pid_turn = 100; 				//Default motor value for PID_Turn
 float default_pid_arm = 100; //Default motor value for PID_arm
@@ -25,6 +25,8 @@ float default_pid_claw = 70; //Default motor value for PID_claw
 float default_pid_bottom = 70; //Default motor value for PID_bottom
 float moveScissor_p = 0.2;
 float default_pid_scissor = 100;
+float initial, difference=0.0;
+
 //Bottom claw motor values
 int bottom_out_fast = 125;
 int bottom_in_fast = -125;
@@ -41,14 +43,15 @@ int bottom_in_slow = -70;
 
 //PID_Straight
 void straight_ms(float t){ //Go straight for certain milisecond
-	float initial, difference=0;
 	clearTimer(T1);
-	SensorValue[gyro] = 0;
+	SensorValue(gyro) = 0;
+	initial = SensorValue(gyro);
 	while(time1[T1] <= t){
-		initial = SensorValue[gyro];
-		difference = SensorValue[gyro]-initial;
-		motor[drive_right] = default_pid_straight+difference*straight_p; 		//Setting speed of motor accourding to the difference
-		motor[drive_left] = default_pid_straight+difference*straight_p; 		//Setting speed of motor accourding to the difference
+		wait1Msec(200);
+		difference = SensorValue(gyro)-initial;
+		motor[drive_right] = default_pid_straight-difference*straight_p; 		//Setting speed of motor accourding to the difference
+		motor[drive_left] = default_pid_straight+difference*straight_p;
+		//Setting speed of motor accourding to the difference
 	}
 }
 
@@ -68,16 +71,16 @@ void straight_cm(float cm){ //Go straight for certain cmc
 //PID_Turn
 void turn(float degree){
 	SensorValue[gyro] = 0;
-	if (degree > 0){
+	if (degree < 0){
 		//Turn right
-		while(SensorValue[gyro] <= degree){
+		while(SensorValue[gyro] >= degree){
 			motor[drive_right] = -1*default_pid_turn;
 			motor[drive_left] = default_pid_turn;
 		}
 	}
 	else{
 		//Turn left
-		while(SensorValue[gyro] >= degree){
+		while(SensorValue[gyro] <= degree){
 			motor[drive_right] = default_pid_turn;
 			motor[drive_left] = -1*default_pid_turn;
 		}
@@ -92,9 +95,9 @@ void scissor(float degree){
 			if (SensorValue(I2C_1)> SensorValue(I2C_2)){
 				motor[scissor_right] = default_pid_scissor+default_pid_scissor*moveScissor_p;
 			}
- 			if(SensorValue(I2C_1)< SensorValue(I2C_2)){
-  			motor[scissor_left] = default_pid_scissor+default_pid_scissor*moveScissor_p;
-  		}
+			if(SensorValue(I2C_1)< SensorValue(I2C_2)){
+				motor[scissor_left] = default_pid_scissor+default_pid_scissor*moveScissor_p;
+			}
 		}
 	}
 	else{
@@ -102,10 +105,10 @@ void scissor(float degree){
 			if (SensorValue(I2C_1)> SensorValue(I2C_2)){
 				motor[scissor_right] = -1*(default_pid_scissor+default_pid_scissor*moveScissor_p);
 			}
- 			if(SensorValue(I2C_1)< SensorValue(I2C_2)){
-  			motor[scissor_left] = -1*(default_pid_scissor+default_pid_scissor*moveScissor_p);
-  		}
-  	}
+			if(SensorValue(I2C_1)< SensorValue(I2C_2)){
+				motor[scissor_left] = -1*(default_pid_scissor+default_pid_scissor*moveScissor_p);
+			}
+		}
 	}
 }
 
@@ -114,7 +117,7 @@ void claw_arm(float degree){
 		while(SensorValue(ArmEncoder_in) <= degree){
 			motor[arm_top] = default_pid_arm;
 		}
-	}else{
+		}else{
 		while(SensorValue(ArmEncoder_in)>= degree){
 			motor[arm_top] = -1*default_pid_arm;
 		}
@@ -209,9 +212,9 @@ void moveScissor(){
 	if (SensorValue(I2C_1)> SensorValue(I2C_2)){
 		motor[scissor_right] = vexRT[Ch3Xmtr2]+vexRT[Ch3Xmtr2]*moveScissor_p;
 	}
-  if(SensorValue(I2C_1)< SensorValue(I2C_2)){
-  	motor[scissor_left] = vexRT[Ch3Xmtr2]+vexRT[Ch3Xmtr2]*moveScissor_p;
-  }
+	if(SensorValue(I2C_1)< SensorValue(I2C_2)){
+		motor[scissor_left] = vexRT[Ch3Xmtr2]+vexRT[Ch3Xmtr2]*moveScissor_p;
+	}
 	//ratio = SensorValue()/SensorValue();
 	//motor[scissor_left] = vexRT[Ch3Xmtr2]+vexRT[Ch3Xmtr2]*ratio;
 	//motor[scissor_right] = vexRT[Ch3Xmtr2]-vexRT[Ch3Xmtr2]*ratio;
@@ -221,16 +224,16 @@ void moveClaw_Bottom(){
 	if(vexRT[Btn6UXmtr2]==1){					//Move bottom claw out
 		motor[bottom_left]=bottom_out_fast;
 		motor[bottom_right]=bottom_out_fast;
-	}else if(vexRT[Btn6DXmtr2]==1){				//Move bottom claw in
+		}else if(vexRT[Btn6DXmtr2]==1){				//Move bottom claw in
 		motor[bottom_left]=bottom_in_fast;
 		motor[bottom_right]=bottom_in_fast;
-	}else if(vexRT[Btn5UXmtr2]==1){
+		}else if(vexRT[Btn5UXmtr2]==1){
 		motor[bottom_left]=bottom_out_slow;
 		motor[bottom_right]=bottom_out_slow;
-	}else if(vexRT[Btn5DXmtr2]==1){				//Move bottom claw in
+		}else if(vexRT[Btn5DXmtr2]==1){				//Move bottom claw in
 		motor[bottom_left]=bottom_in_slow;
 		motor[bottom_right]=bottom_in_slow;
-	}else{										//Stop bottom claw
+		}else{										//Stop bottom claw
 		motor[bottom_left]=0;
 		motor[bottom_right]=0;
 	}
@@ -239,5 +242,6 @@ void moveClaw_Bottom(){
 /////////////////////////////////////////////////////////MAIN/////////////////////////////////////////////////////////////////////////
 task main()
 {
-	straight_ms(10000);
+	//straight_ms(10000);
+	turn(1800);
 }
