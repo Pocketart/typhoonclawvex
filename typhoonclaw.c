@@ -69,7 +69,8 @@ void straight_cm(float cm){ //Go straight for certain cmc
 }
 
 //PID_Turn
-void turn(float degree){
+void turn(float degree){ //Degree --> -360~360
+	degree = degree*10;
 	SensorValue[gyro] = 0;
 	if (degree < 0){
 		//Turn right
@@ -243,4 +244,5 @@ void moveClaw_Bottom(){
 task main()
 {
 	straight_ms(5000);
+	//turn(180);
 }
