@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////PARAMETER///////////////////////////////////////////////////////////////////
 
 //PID CONSTANTS
-float straight_p = 4;					//P constant for Straight_PID
+float straight_p = 3.5;					//P constant for Straight_PID
 float default_pid_straight = 100;			//Default motor value for PID_Straight
 float default_pid_turn = 100; 				//Default motor value for PID_Turn
 float default_pid_arm = 100; //Default motor value for PID_arm
@@ -242,6 +242,5 @@ void moveClaw_Bottom(){
 /////////////////////////////////////////////////////////MAIN/////////////////////////////////////////////////////////////////////////
 task main()
 {
-	//straight_ms(10000);
-	turn(1800);
+	straight_ms(5000);
 }
