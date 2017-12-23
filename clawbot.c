@@ -11,6 +11,8 @@ void movewheel2control(){//motor controlled by two joystick
 void movewheel(){//motor controlled by one joystick
 	float y = vexRT[Ch2]/2;//get joystick value
 	float x = vexRT[Ch1]/2;//get joystick value
+	y*=0.9;
+	x*=0.9;
 	float left_motor;//variable for speed of left motor
 	float right_motor;//variable for speed of right motor
 	float power, st;//power for speed to distribute, st for steering
@@ -46,24 +48,30 @@ void movewheel(){//motor controlled by one joystick
 	motor[port1] = right_motor;//set speed for right motor
 }
 
-void moveclaw(){
+void movearm(){
 	if(vexRT[Btn5U] == 1){//check of button 5U is pressed
 		motor[port7] = 100;//lift arm if it does not exceed limit
 	}
 	else if(vexRT[Btn5D] == 1){//check of button 5D is pressed
 		motor[port7] = -30;//lower arm
 	}
-	else if(vexRT(Btn6U) == 1){//check of button 6U is pressed
+	else{
+		motor[port7] = 15;//prevent arm from falling down due to gravity
+	}
+	
+}
+
+void moveclaw(){
+	if(vexRT(Btn6U) == 1){//check of button 6U is pressed
 		motor[port6] = 100;//open claw
 	}
 	else if(vexRT(Btn6D) == 1){//check of button 6D is pressed
 		motor[port6] = -100;//close claw
 	}else{
-		motor[port6] = 5;//assure claw is shut tightly
-		motor[port7] = 15;//prevent arm from falling down due to gravity
-	}
+		motor[port6] = 0;//assure claw is shut tightly
+	}	
 }
-
+/*
 void lineFollow(float motor1, float motor10, float difference, float a){
 	if(sensorvalue(armstop)==1){//button for safety
 			difference = sensorValue(light_right)-sensorValue(light_left);//difference between two light sensor
@@ -74,11 +82,12 @@ void lineFollow(float motor1, float motor10, float difference, float a){
 			motor[port10] = 0;//stop if button is not pressed
 	}
 }
-
-void testStraight(){
+*/
+/*void testStraight(){
 	motor[port1]=vexRT[ch2];
 	motor[port10]=-vexRT[ch2];
 }
+*/
 
 task main(){
 	// variable initializing for line following mechanism
@@ -89,6 +98,7 @@ task main(){
 	float a = -0.03325//adjusting constant
 	*/
 	while(true){
+		movearm();
 		moveclaw();
 		movewheel();
 	}
