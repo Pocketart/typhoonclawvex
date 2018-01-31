@@ -1,0 +1,26 @@
+String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#,"B"};
+String index;
+
+void noteOn(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
+  MIDIUSB.write(noteOn);
+}
+
+void noteOff(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MIDIUSB.write(noteOff);
+}
+
+void playNote(String _note, int octave, int t){
+  for(int i=0; i<sizeOf(notes); i++){
+    if(_note.equals(notes[i]){
+      index = i;
+    }
+  }
+  noteOn(0, index+octave*12, 64);
+  MIDIUSB.flush();
+  delay(t);
+  
+  noteOff(0, index+octave*12, 64);
+  MIDIUSB.flush();
+}
