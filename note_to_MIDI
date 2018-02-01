@@ -1,5 +1,5 @@
-String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#,"B"};
-String index;
+String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+int index;
 
 void noteOn(byte channel, byte pitch, byte velocity) {
   MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
@@ -12,8 +12,8 @@ void noteOff(byte channel, byte pitch, byte velocity) {
 }
 
 void playNote(String _note, int octave, int t){
-  for(int i=0; i<sizeOf(notes); i++){
-    if(_note.equals(notes[i]){
+  for(int i=0; i<12; i++){
+    if(_note.equals(notes[i])){
       index = i;
     }
   }
