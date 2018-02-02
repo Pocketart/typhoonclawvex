@@ -50,7 +50,7 @@ void playNote(int note, int t){
  MIDIUSB.flush();
 }
 
-int eRead(int out1, int out 2, int lastState) {
+int eRead(int out1, int out2, int lastState) {
   int counter = 0;
   state = digitalRead(out1);
   if (state != lastState){     
