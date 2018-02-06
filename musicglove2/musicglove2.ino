@@ -135,6 +135,7 @@ void get_Colors(void)
     {44000, 53100, 34200} // white
   }; 
   String colorary [9] = {"red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"};
+  int switchnum;
   for (int y = 0; y < 9; y++)
   {
     if ((red_color < (ary[0][y] + constanterror)) && (red_color > (ary[0][y] - constanterror)))
@@ -152,30 +153,31 @@ void get_Colors(void)
     if ((redMatch == true) && (blueMatch == true) && (greenMatch = true))
     {
       Serial.println(colorary[y]);
+      switchnum = y;
       break;
     }
-    switch(y)
+    switch(switchnum)
     {
       case 0:
-      playNote("C", 4, 200);
+      playNote("C", 4, 300);
       break;
       case 1:
-      playNote("D", 4, 200);
+      playNote("D", 4, 300);
       break;
       case 2:
-      playNote("E", 4, 200);
+      playNote("E", 4, 300);
       break;
       case 3: 
-      playNote("F", 4, 200);
+      playNote("F", 4, 300);
       break;
       case 4:
-      playNote("G", 4, 200);
+      playNote("G", 4, 300);
       break;
       case 5:
-      playNote("A", 4, 200);
+      playNote("A", 4, 300);
       break;
       case 6:
-      playNote("B", 4, 200);   
+      playNote("B", 4, 300);   
       break;
     }
   }
