@@ -3,10 +3,8 @@
 
 String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 int stepArr[] = {0,2,4,5,7,9,11,12};
-//int keyStep[] = {10, 5, 0, 7, 2, 9, 4};
-int update[] = {0,0};
-int _note, _key, _range;
-int index;
+int keyStep[] = {10, 5, 0, 7, 2, 9, 4}; //A#, F, C, G, D, A, E
+int _note, _key, _octave;
 int counterS = 0;
 int counterP = 0;
 int counterG = 0;
@@ -33,6 +31,9 @@ const int outputF = 7;
 const int outputG = 8;
 const int outputH = 9;
 
+// Button
+const int buttonPin = 10;
+int buttonState = 0;
 void noteOn(byte channel, byte pitch, byte velocity) {
   MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
   MIDIUSB.write(noteOn);
@@ -99,7 +100,7 @@ void eRead(int out1, int out2) {
         counterT ++;
       }
     else {
-      counterP --;
+      counterT --;
     }
     Serial.print("PositionT: ");
     Serial.println(counterT);
@@ -107,9 +108,20 @@ void eRead(int out1, int out2) {
   gLastState = state;
   }
 }
+int changeOctave(){
+  buttonState = digitalRead(buttonPin);
+  if (buttonState == HIGH) {
+    return 7;
+  } 
+  else {
+    return 6;
+  }
+}
+
 
 void setup(){
   //Setup encoders' pins
+  pinMode (buttonPin, INPUT);
   pinMode (outputA,INPUT);
   pinMode (outputB,INPUT);
   pinMode (outputC,INPUT);
@@ -131,11 +143,11 @@ void setup(){
 void loop(){
   // put your main code here, to run repeatedly: 
   eRead(outputE, outputF);
-  _key = (int)((double) counterG/20*11);
+  _key = keyStep[(int)((double) counterG/20*7)];
+  _octave = changeOctave();
   eRead(outputA, outputB);
-  _note = _key+stepArr[(int)((double) counterS/40*7)];
+  _note = _key+stepArr[(int)((double) counterS/40*7)]+_octave;
   //counterP = encoderRead(outputC, outputD, cLastState);
   //counterG = eRead(outputE, outputF, eLastState);
   playNote(_note, 0);
-  //delay(100);
 }
