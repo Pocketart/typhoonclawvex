@@ -120,8 +120,9 @@ int changeOctave(){
 
 
 void setup(){
-  //Setup encoders' pins
+  //Setup button's pin
   pinMode (buttonPin, INPUT);
+  //Setup encoders' pins
   pinMode (outputA,INPUT);
   pinMode (outputB,INPUT);
   pinMode (outputC,INPUT);
@@ -141,13 +142,13 @@ void setup(){
 }
 
 void loop(){
-  // put your main code here, to run repeatedly: 
   eRead(outputE, outputF);
   _key = keyStep[(int)((double) counterG/20*7)];
   _octave = changeOctave();
   eRead(outputA, outputB);
   _note = _key+stepArr[(int)((double) counterS/40*7)]+_octave;
-  //counterP = encoderRead(outputC, outputD, cLastState);
-  //counterG = eRead(outputE, outputF, eLastState);
-  playNote(_note, 0);
+  eRead(outputC, outputD);
+  if (counterP > 0){
+    playNote(_note,0);
+  }
 }
