@@ -48,7 +48,7 @@ void playNote(int note, int t){
  noteOn(0, note, 64);
  MIDIUSB.flush();
  delay(t);
-  
+ eRead(outputC, outputD); 
  noteOff(0, note, 64);
  MIDIUSB.flush();
 }
@@ -146,9 +146,14 @@ void loop(){
   _key = keyStep[(int)((double) counterG/20*7)];
   _octave = changeOctave();
   eRead(outputA, outputB);
-  _note = _key+stepArr[(int)((double) counterS/40*7)]+_octave;
+  _note = _key+stepArr[(int)((double) counterS/40*7)]+60;
+  //Serial.println(_note);  
   eRead(outputC, outputD);
-  if (counterP > 0){
-    playNote(_note,0);
+  if(counterP != 0){
+    noteOn(0, _note, 64);
+    while (counterP != 0){
+      eRead(outputC, outputD);
+    }
+    noteOff(0, _note, 64);
   }
 }
