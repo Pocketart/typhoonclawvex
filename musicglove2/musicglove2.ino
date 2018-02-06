@@ -157,25 +157,25 @@ void get_Colors(void)
     switch(y)
     {
       case 0:
-      playNote("C", 4, 500);
+      playNote("C", 4, 200);
       break;
       case 1:
-      playNote("D", 4, 500);
+      playNote("D", 4, 200);
       break;
       case 2:
-      playNote("E", 4, 500);
+      playNote("E", 4, 200);
       break;
       case 3: 
-      playNote("F", 4, 500);
+      playNote("F", 4, 200);
       break;
       case 4:
-      playNote("G", 4, 500);
+      playNote("G", 4, 200);
       break;
       case 5:
-      playNote("A", 4, 500);
+      playNote("A", 4, 200);
       break;
       case 6:
-      playNote("B", 4, 500);   
+      playNote("B", 4, 200);   
       break;
     }
   }
