@@ -20,8 +20,8 @@ int state = 0;
 
 /*
   Send register address and the byte value you want to write the magnetometer and
-  loads the destination register with the value you send
-*/
+ loads the destination register with the value you send
+ */
 void Writei2cRegisters(byte numberbytes, byte command)
 {
   byte i = 0;
@@ -37,8 +37,8 @@ void Writei2cRegisters(byte numberbytes, byte command)
 
 /*
   Send register address to this function and it returns byte value
-  for the magnetometer register's contents
-*/
+ for the magnetometer register's contents
+ */
 byte Readi2cRegisters(int numberbytes, byte command)
 {
   byte i = 0;
@@ -80,7 +80,7 @@ void get_TCS34725ID(void)
 
 /*
   Reads the register values for clear, red, green, and blue.
-*/
+ */
 void get_Colors(void)
 {
   unsigned int clear_color = 0;
@@ -108,34 +108,44 @@ void get_Colors(void)
   // Basic RGB color differentiation can be accomplished by comparing the values and the largest reading will be
   // the prominent color
 
-  if ((red_color > blue_color) && (red_color > green_color))
-    Serial.println("detecting red");
-  else if ((green_color > blue_color) && (green_color > red_color))
-    Serial.println("detecting green");
-  else if ((blue_color > red_color) && (blue_color > green_color))
-    Serial.println("detecting blue");
-  else
-    Serial.println("color not detectable");
-    
+
   const int sizeRow = 9; // RGB
   const int sizeCol = 3; // nine colors
-  int constanterror = 3500;
+  int constanterror = 5000;
   bool redMatch = false;
   bool greenMatch = false;
   bool blueMatch = false;
   long int ary[sizeRow][sizeCol] =
-  { {19000, 12200, 5500}, // red
-    {12000, 6800, 3750}, // orange
-    {35000, 38700, 15150}, // yellow
-    {6700, 15700, 7800}, // green
-    {6050, 1000, 10200}, // blue
-    {11000, 12500, 10900}, // indigo
-    {5200, 4900, 5100}, // violet
-    {200, 120, 55}, // black
-    {44000, 53100, 34200} // white
+  { 
+    {
+      19000, 12200, 5500            }
+    , // red
+    {
+      12000, 6800, 3750            }
+    , // orange
+    {
+      35000, 38700, 15150            }
+    , // yellow
+    {
+      6700, 15700, 7800            }
+    , // green
+    {
+      6050, 1000, 10200            }
+    , // blue
+    {
+      11000, 12500, 10900            }
+    , // indigo
+    {
+      5200, 4900, 5100            }
+    , // violet
+    {
+      200, 120, 55            }
+    , // black
+    {
+      44000, 53100, 34200            } // white
   }; 
-  String colorary [9] = {"red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"};
-  int switchnum;
+  String colorary [9] = {
+    "red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"      };
   for (int y = 0; y < 9; y++)
   {
     if ((red_color < (ary[0][y] + constanterror)) && (red_color > (ary[0][y] - constanterror)))
@@ -153,46 +163,49 @@ void get_Colors(void)
     if ((redMatch == true) && (blueMatch == true) && (greenMatch = true))
     {
       Serial.println(colorary[y]);
-      switchnum = y;
-      break;
-    }
-    switch(switchnum)
-    {
+      switch(y)
+      {
       case 0:
-      playNote("C", 4, 300);
-      break;
+        playNote("C", 4, 300);
+        break;
       case 1:
-      playNote("D", 4, 300);
-      break;
+        playNote("D", 4, 300);
+        break;
       case 2:
-      playNote("E", 4, 300);
-      break;
+        playNote("E", 4, 300);
+        break;
       case 3: 
-      playNote("F", 4, 300);
-      break;
+        playNote("F", 4, 300);
+        break;
       case 4:
-      playNote("G", 4, 300);
-      break;
+        playNote("G", 4, 300);
+        break;
       case 5:
-      playNote("A", 4, 300);
-      break;
+        playNote("A", 4, 300);
+        break;
       case 6:
-      playNote("B", 4, 300);   
+        playNote("B", 4, 300);   
+        break;
+      }
       break;
     }
+
   }
 }
 
-String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+String notes[] = {
+  "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 int index;
 
 void noteOn(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity      };
   MIDIUSB.write(noteOn);
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity      };
   MIDIUSB.write(noteOff);
 }
 
@@ -205,7 +218,7 @@ void playNote(String _note, int octave, int t){
   noteOn(0, index+octave*12, 64);
   MIDIUSB.flush();
   delay(t);
-  
+
   noteOff(0, index+octave*12, 64);
   MIDIUSB.flush();
 }
@@ -239,9 +252,11 @@ void loop() {
   }
   else if (state == '1') {
     digitalWrite(ledPin, HIGH);
-    Serial.println("LED: ON");;
+    Serial.println("LED: ON");
+    ;
     state = 0;
-  } if (Serial.available() > 0) { // Checks whether data is comming from the serial port
+  } 
+  if (Serial.available() > 0) { // Checks whether data is comming from the serial port
     state = Serial.read(); // Reads the data from the serial port
   }
   if (state == '0') {
@@ -251,7 +266,14 @@ void loop() {
   }
   else if (state == '1') {
     digitalWrite(ledPin, HIGH);
-    Serial.println("LED: ON");;
+    Serial.println("LED: ON");
+    ;
     state = 0;
   }
+  Wire.beginTransmission(8);
+  Wire.endTransmission();
+  // 
 }
+
+
+
