@@ -1,18 +1,22 @@
 
-#include <math.h>
+#include <Math.h>
 #include <MIDI.h>
 
 const int potIn1 = A0;
 const int potIn2 = A1;
 const int potIn3 = A2;
 const int potIn4 = A3;
+const int digIn1 = 2;
 
 int RawValue1 = 0;
 int RawValue2 = 0;
 int RawValue3 = 0;
 int RawValue4 = 0;
+int RawValueButton = 0;
 
 int _note, _key, _range, _volume;
+int count=0;
+int now;
 
 int stepArr[] = {0,2,4,5,7,9,11,12};
 
@@ -40,7 +44,9 @@ void setup() {
   pinMode(potIn1, INPUT);
   pinMode(potIn2, INPUT);
   pinMode(potIn3, INPUT);
-  //pinMode(potIn4, INPUT);
+
+  pinMode(digIn1, INPUT);
+  
   Serial.begin(9600);
 }
 
@@ -50,12 +56,23 @@ void loop() {
   RawValue2 = analogRead(potIn2);
   RawValue3 = analogRead(potIn3);
   
+  RawValueButton = digitalRead(digIn1);
   _key = (int)((double)RawValue1/1023*11);
   _range = (int)((double)RawValue3/1023*2+4);
   _note = _key+stepArr[(int)((double)RawValue2/1023*7)]+_range*12;
   
-  playNote(_note, 500);
-  Serial.println(1);
+  if(RawValueButton == LOW){
+    noteOn(0, _note, 64);
+    MIDIUSB.flush();
+    while(RawValueButton==LOW){
+      delay(1);
+      RawValueButton = digitalRead(digIn1);
+    }
+    Serial.println("Sound Sent");
+  }  
+  Serial.println(RawValueButton);
   
-  delay(500);
+  noteOff(0,_note,64);
+  MIDIUSB.flush();
+  delay(100);
 }
