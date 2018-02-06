@@ -117,13 +117,13 @@ void get_Colors(void)
   else
     Serial.println("color not detectable");
     
-  int sizeRow = 9; // RGB
-  int sizeCol = 3; // nine colors
+  const int sizeRow = 9; // RGB
+  const int sizeCol = 3; // nine colors
   int constanterror = 3500;
   bool redMatch = false;
   bool greenMatch = false;
   bool blueMatch = false;
-  long int ary [sizeRow][sizeCol] =
+  long int ary[sizeRow][sizeCol] =
   { {19000, 12200, 5500}, // red
     {12000, 6800, 3750}, // orange
     {35000, 38700, 15150}, // yellow
@@ -157,22 +157,30 @@ void get_Colors(void)
     switch(y)
     {
       case 0:
-      noteOn("C", 1, 1);
+      playNote("C", 4, 500);
+      break;
       case 1:
-      noteOn("D", 1, 1);
+      playNote("D", 4, 500);
+      break;
       case 2:
-      noteOn("E", 1, 1);
+      playNote("E", 4, 500);
+      break;
       case 3: 
-      noteOn("F", 1, 1);
+      playNote("F", 4, 500);
+      break;
       case 4:
-      noteOn("G", 1, 1);
+      playNote("G", 4, 500);
+      break;
       case 5:
-      noteOn("A", 1, 1);
+      playNote("A", 4, 500);
+      break;
       case 6:
-      noteOn("B", 1, 1);   
+      playNote("B", 4, 500);   
+      break;
     }
   }
 }
+
 String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 int index;
 
