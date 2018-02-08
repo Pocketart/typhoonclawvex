@@ -111,7 +111,7 @@ void get_Colors(void)
 
   const int sizeRow = 9; // RGB
   const int sizeCol = 3; // nine colors
-  int constanterror = 5000;
+  int constanterror = 6000;
   bool redMatch = false;
   bool greenMatch = false;
   bool blueMatch = false;
@@ -142,7 +142,7 @@ void get_Colors(void)
       200, 120, 55            }
     , // black
     {
-      44000, 53100, 34200            } // white
+      20000, 20000, 20000            } // white
   }; 
   String colorary [9] = {
     "red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"      };
