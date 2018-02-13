@@ -111,32 +111,32 @@ void get_Colors(void)
 
   const int sizeRow = 9; // RGB
   const int sizeCol = 3; // nine colors
-  int constanterror = 6000;
+  int constanterror = 2000;
   bool redMatch = false;
   bool greenMatch = false;
   bool blueMatch = false;
   long int ary[sizeRow][sizeCol] =
   { 
     {
-      19000, 12200, 5500            }
+      6612, 1975, 2010            }
     , // red
     {
-      12000, 6800, 3750            }
+      14000, 6300, 4300            }
     , // orange
     {
-      35000, 38700, 15150            }
+      14000, 8400, 3200            }
     , // yellow
     {
-      6700, 15700, 7800            }
+      1360, 2170, 1100            }
     , // green
     {
-      6050, 1000, 10200            }
+      1230, 2400, 2600            }
     , // blue
     {
-      11000, 12500, 10900            }
+      1490, 2220, 2300            }
     , // indigo
     {
-      5200, 4900, 5100            }
+      2200, 1860, 1870            }
     , // violet
     {
       200, 120, 55            }
@@ -148,19 +148,19 @@ void get_Colors(void)
     "red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"      };
   for (int y = 0; y < 9; y++)
   {
-    if ((red_color < (ary[0][y] + constanterror)) && (red_color > (ary[0][y] - constanterror)))
+    if ((red_color < (ary[y][0] + constanterror)) && (red_color > (ary[y][0] - constanterror)))
     {
       redMatch = true;
     }
-    if ((blue_color < (ary[1][y] + constanterror)) && (blue_color > (ary[1][y] - constanterror)))
-    {
-      blueMatch = true;
-    }
-    if ((green_color < (ary[2][y] + constanterror)) && (green_color > (ary[2][y] - constanterror)))
+    if ((green_color < (ary[y][1] + 1000)) && (green_color > (ary[y][1] - 1000)))
     {
       greenMatch = true;
     }
-    if ((redMatch == true) && (blueMatch == true) && (greenMatch = true))
+    if ((blue_color < (ary[y][2] + 1000)) && (blue_color > (ary[y][2] - 1000)))
+    {
+      blueMatch = true;
+    }
+    if ((redMatch == true) && (greenMatch == true) && (blueMatch == true))
     {
       Serial.println(colorary[y]);
       switch(y)
