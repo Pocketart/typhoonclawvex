@@ -1,3 +1,6 @@
+#include <Math.h>
+
+
 // Set up variables for dance pad input
 int bass= 2; 
 int hHat = 3;
@@ -40,20 +43,55 @@ void loop()
   //val = analogRead(analogPin);
   valbass = digitalRead(bass);// read the input pin
   Serial.println(valbass);  
+  if (valbass!=0){
+    
+  }
+  
+  
   valhHat = digitalRead(hHat);// read the input pin
   Serial.println(valhHat);  
+  if (valhHat!=0){
+    
+  }
+  
    valhTom = digitalRead(hTom);// read the input pin
-  Serial.println(valhTom);  
+  Serial.println(valhTom); 
+  if (valhTom!=0){
+    
+  }
+   
+  
    valmTom = digitalRead(mTom);// read the input pin
   Serial.println(valmTom);  
+  if (valmTom!=0){
+    
+  }
+  
    valride = digitalRead(ride);// read the input pin
   Serial.println(valride); 
+  if (valride!=0){
+    
+  }
+  
    valsnare = digitalRead(snare);// read the input pin
-  Serial.println(valsnare);  
+  Serial.println(valsnare); 
+  if (valsnare!=0){
+    
+  }
+  
    vallTom= digitalRead(lTom);// read the input pin
-  Serial.println(vallTom);   
+  Serial.println(vallTom); 
+  if (vallTom!=0){
+    
+  }  
+  
    valcrash = digitalRead(crash);// read the input pin
-  Serial.println(valcrash);  
+  Serial.println(valcrash);
+  if (valcrash!=0){
+    
+  } 
+
+ 
   
 // debug value
 
