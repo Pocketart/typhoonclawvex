@@ -9,7 +9,6 @@ const int potIn4 = A3;
 const int digIn1 = 2;
 const int digIn3 = 3;
 const int digIn4 = 4;
-const int digIn5 = 5;
 
 int RawValue1 = 0;
 int RawValue2 = 0;
@@ -18,7 +17,6 @@ int RawValue4 = 0;
 int RawValueButton = 0;
 int sharp = 0;
 int flat = 0;
-int noSig = 0;
 
 int _note, _key, _range, _volume;
 int count=0;
@@ -47,29 +45,6 @@ void playNote(int note, int t){
   noteOff(0, note, 64);
   MIDIUSB.flush();
 }
-String notes[] = {
-  "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
-//determine if a note has a key signature
-boolean hasSignature(int _note){
-  _note -= ((_note)/12)*12;
-  return notes[_note].length()!=1;
-}
-
-//determine the accidental of a note, 1 for sharp, 0 for original, -1 for flat
-int accidentals(int _note, int a) {
-  switch(a) {
-  case 0:
-    return 0;
-  case 1:
-    return (hasSignature(_note))?0:1;
-  case 2:
-    return (hasSignature(_note))?-1:0;
-  case 4:
-    return (hasSignature(_note))?-2:-1;
-  default:
-    return 0;
-  }		
-}
 
 void setup() {
   // put your setup code here, to run once:
@@ -93,12 +68,11 @@ void loop() {
   RawValueButton = digitalRead(digIn1);
   sharp = digitalRead(digIn3);
   flat = digitalRead(digIn4);
-  noSig = digitalRead(digIn5);
   
   _key = (int)((double)RawValue1/1023*11);
   _range = (int)((double)RawValue3/1023*2+4);
   _note = _key+stepArr[(int)((double)RawValue2/1023*7)]+_range*12;
-  _note += accidentals(_note, sharp+noSig*2+flat*4);
+  _note += sharp + flat*-1;
 
   if(RawValueButton == LOW){
     noteOn(0, _note, 100);
