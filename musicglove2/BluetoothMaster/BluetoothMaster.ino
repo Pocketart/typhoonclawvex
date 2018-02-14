@@ -1,4 +1,9 @@
 #include <Math.h>
+#include <AltSoftSerial.h>
+
+AltSoftSerial BTSerial;
+
+
 
 byte i2cWriteBuffer[10];
 byte i2cReadBuffer[10];
@@ -17,13 +22,28 @@ byte i2cReadBuffer[10];
 //Arduino Bluetooth sketch for the master device
 //http://www.martyncurrey.com/arduino-to-arduino-by-bluetooth/
 
-#include <AltSoftSerial.h>
-AltSoftSerial BTSerial;
-
 // Change DEBUG to true to output debug information to the serial monitor
 boolean DEBUG = true;
 
 //int blackOrWhite; // black: 0, white: 1
+
+byte Readi2cRegisters(int numberbytes, byte command)
+{
+  byte i = 0;
+
+  Wire.beginTransmission(SensorAddressWrite);   // Write address of read to sensor
+  Wire.write(command);
+  Wire.endTransmission();
+
+  delayMicroseconds(100);      // allow some time for bus to settle
+
+  Wire.requestFrom(SensorAddressRead, numberbytes);  // read data
+  for (i = 0; i < numberbytes; i++)
+    i2cReadBuffer[i] = Wire.read();
+  Wire.endTransmission();
+
+  delayMicroseconds(100);      // allow some time for bus to settle
+}
 
 void init_TCS34725(void)
 {
