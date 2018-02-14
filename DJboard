@@ -7,36 +7,43 @@ const int potIn2 = A1;
 const int potIn3 = A2;
 const int potIn4 = A3;
 const int digIn1 = 2;
+const int digIn3 = 3;
+const int digIn4 = 4;
 
 int RawValue1 = 0;
 int RawValue2 = 0;
 int RawValue3 = 0;
 int RawValue4 = 0;
 int RawValueButton = 0;
+int sharp = 0;
+int flat = 0;
 
 int _note, _key, _range, _volume;
 int count=0;
 int now;
 
-int stepArr[] = {0,2,4,5,7,9,11,12};
+int stepArr[] = {
+  0,2,4,5,7,9,11,12};
 
 void noteOn(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity  };
   MIDIUSB.write(noteOn);
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity  };
   MIDIUSB.write(noteOff);
 }
 
 void playNote(int note, int t){
- noteOn(0, note, 64);
- MIDIUSB.flush();
- delay(t);
-  
- noteOff(0, note, 64);
- MIDIUSB.flush();
+  noteOn(0, note, 64);
+  MIDIUSB.flush();
+  delay(t);
+
+  noteOff(0, note, 64);
+  MIDIUSB.flush();
 }
 
 void setup() {
@@ -46,6 +53,8 @@ void setup() {
   pinMode(potIn3, INPUT);
 
   pinMode(digIn1, INPUT);
+  pinMode(digIn3, INPUT);
+  pinMode(digIn4, INPUT);
   
   Serial.begin(9600);
 }
@@ -55,24 +64,27 @@ void loop() {
   RawValue1 = analogRead(potIn1);
   RawValue2 = analogRead(potIn2);
   RawValue3 = analogRead(potIn3);
-  
+
   RawValueButton = digitalRead(digIn1);
+  sharp = digitalRead(digIn3);
+  flat = digitalRead(digIn4);
+  
   _key = (int)((double)RawValue1/1023*11);
   _range = (int)((double)RawValue3/1023*2+4);
   _note = _key+stepArr[(int)((double)RawValue2/1023*7)]+_range*12;
-  
+  _note += sharp + flat*-1;
+
   if(RawValueButton == LOW){
-    noteOn(0, _note, 64);
+    noteOn(0, _note, 100);
     MIDIUSB.flush();
     while(RawValueButton==LOW){
       delay(1);
       RawValueButton = digitalRead(digIn1);
     }
-    Serial.println("Sound Sent");
   }  
-  Serial.println(RawValueButton);
-  
-  noteOff(0,_note,64);
+
+  noteOff(0,_note,100);
   MIDIUSB.flush();
   delay(100);
 }
+
