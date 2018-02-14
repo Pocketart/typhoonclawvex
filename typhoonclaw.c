@@ -1,7 +1,3 @@
-#pragma config(Motor,  port1,           right,         tmotorVex393_HBridge, openLoop)
-#pragma config(Motor,  port6,           claw,          tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port7,           arm,           tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port10,          left,          tmotorVex393_HBridge, openLoop)
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in8,    gyro,           sensorGyro)
 #pragma config(Sensor, dgtl3,  ClawEncoder_in, sensorQuadEncoder)
@@ -165,21 +161,6 @@ void auto_top_claw(float degree){
 		}
 	}
 }
-void movewheel(){//motor controlled by one joystick
-	float y = vexRT[Ch2]/2;//get joystick value
-	//change to left side control 2017/11/10
-	float x = vexRT[Ch1]/2;//get joystick value
-	//change to left 2017/11/10
-	y*=0.9;
-	x*=0.9;
-	float left_motor;//variable for speed of left motor
-	float right_motor;//variable for speed of right motor
-	float power, st;//power for speed to distribute, st for steering
-	power = sqrt(x*x+y*y);//calculating power
-	if(y>=0&&power!=0){//check joystick position of y
-		st = x * 100/power;//set value for st
-		if(x>=0){//check joystick position of x
-			left_motor = power;//set speed
 
 void auto_bottomIn(float t){
 	clearTimer(T2);
@@ -239,60 +220,6 @@ void moveBot(){																	//Motor controlled by one joystick
 	motor[drive_right] = right_motor;			//Set speed for right motor
 }
 
-void movearm(){
-	/*
-	if(vexRT[Btn5U] == 1){//check of button 5U is pressed
-		motor[port7] = 75;//lift arm if it does not exceed limit
-	}
-	else if(vexRT[Btn5D] == 1){//check of button 5D is pressed
-		motor[port7] = -50;//lower arm
-	}
-	else{
-		motor[port7] = 15;//prevent arm from falling down due to gravity
-	}
-	*/
-	//2017/11/10 change to joystick control
-	if(vexRT[ch3]>-10&&vexRT[ch3]<10){
-		motor[port7] = 15;
-	}else{
-		motor[port7] = vexRT[ch3]/2;
-	}
-}
-
-void moveclaw(){
-	/*
-	if(vexRT(Btn6U) == 1){//check of button 6U is pressed
-		motor[port6] = 100;//open claw
-	}
-	else if(vexRT(Btn6D) == 1){//check of button 6D is pressed
-		motor[port6] = -25;//close claw
-	}else{
-		motor[port6] = 0;//assure claw is shut tightly
-	}	
-	*/
-	//change control 2017/11/10
-	if(vexRT[Btn6U]==1
-		||vexRT[Btn8R]==1)
-	{
-		motor[port6] = 100;
-	}
-	else if(vexRT[Btn8D]==1
-					||vexRT[Btn6D]==1)
-	{
-		motor[port6] = -25;
-	}else{
-		motor[port6] = 0;
-	}
-}	
-/*
-void lineFollow(float motor1, float motor10, float difference, float a){
-	if(sensorvalue(armstop)==1){//button for safety
-			difference = sensorValue(light_right)-sensorValue(light_left);//difference between two light sensor
-			motor[port1] = motor1+difference*a;//setting speed of motor, check if robot should turn
-			motor[port10] = motor10+difference*a;//setting speed of motor, check if robot should turn
-	}else{
-			motor[port1] = 0;//stop if button is not pressed
-			motor[port10] = 0;//stop if button is not pressed
 void moveScissor(){
 	if (SensorValue(I2C_1) > SensorValue(I2C_2)){
 		//difference = SensorValue(I2C_1) - SensorValue(I2C_2);
@@ -336,26 +263,7 @@ void moveClaw_top(){
 		motor[claw_top] = 10;
 	}
 }
-*/
-/*void testStraight(){
-	motor[port1]=vexRT[ch2];
-	motor[port10]=-vexRT[ch2];
-}
-*/
 
-task main(){
-	// variable initializing for line following mechanism
-	/*
-	float motor1 = 25;//initializing right motor speed
-	float motor10 = -25;//initializing left motor speed
-	float difference = 0;//difference between two sensor values
-	float a = -0.03325//adjusting constant
-	*/
-	while(true){
-		movearm();
-		moveclaw();
-		movewheel();
-	}
 void moveArm_top(){
 
 }

@@ -1,0 +1,50 @@
+String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+int index;
+
+//default code
+void noteOn(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity  };
+  MIDIUSB.write(noteOn);
+}
+//default code
+void noteOff(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity  };
+  MIDIUSB.write(noteOff);
+}
+
+//Parameters: note as string(ex. C, C#), octave as integer, time in milliseconds.
+void playNote(String _note, int octave, int t){
+  for(int i=0; i<12; i++){
+    if(_note.equals(notes[i])){
+      index = i;
+    }
+  }
+  noteOn(0, index+octave*12, 64);
+  MIDIUSB.flush();
+  delay(t);
+
+  noteOff(0, index+octave*12, 64);
+  MIDIUSB.flush();
+}
+
+//determine if a note has a key signature
+boolean hasSignature(int _note){
+  _note -= ((_note)/12)*12;
+  return notes[_note].length()!=1;
+}
+
+//determine the accidental of a note, 1 for sharp, 0 for original, -1 for flat
+int accidentals(int _note, int a) {
+  switch(a) {
+  case 1:
+    return (hasSignature(_note))?_note:_note+1;
+  case 0:
+    return (hasSignature(_note))?_note-1:_note;
+  case -1:
+    return (hasSignature(_note))?_note-2:_note-1;
+  default:
+    return 0;
+  }		
+}
