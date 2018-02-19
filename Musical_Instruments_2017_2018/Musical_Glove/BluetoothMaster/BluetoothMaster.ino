@@ -64,13 +64,22 @@ void get_Colors(void)
   unsigned int blue_color = 0;
 
   Readi2cRegisters(8, ColorAddress);
-  red_color = (unsigned int)(i2cReadBuffer[3] << 8) + (unsigned int)i2cReadBuffer[2];
-  green_color = (unsigned int)(i2cReadBuffer[5] << 8) + (unsigned int)i2cReadBuffer[4];
+  black_color = (unsigned int)(i2cReadBuffer[3] << 8) + (unsigned int)i2cReadBuffer[2];
+  white_color = (unsigned int)(i2cReadBuffer[5] << 8) + (unsigned int)i2cReadBuffer[4];
 
-  Serial.print(" red color=");
+  long int ary[sizeRow][sizeCol] =
+  { 
+    {
+      6612, 1975, 2010            }
+    , // red
+    {
+      14000, 6300, 4300            }
+    , // orange
+
+  Serial.print(" Black color=");
   Serial.print(red_color, DEC);
-  Serial.print(" green color=");
-  Serial.print(green_color, DEC);
+  Serial.print(" White color=");
+  Serial.print(white_color, DEC);
 
 void setup()
 {
