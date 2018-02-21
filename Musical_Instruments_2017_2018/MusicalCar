@@ -27,13 +27,16 @@ const int outputD = 5;
 const int outputE = 6;
 const int outputF = 7;
 
-//Turing Light Encoder
-const int outputG = 8;
-const int outputH = 9;
-
-// Button
-const int buttonPin = 10;
+// Button for octave
+const int octavePin = 10;
 int buttonState = 0;
+
+//Button for sharp/flat
+const int sharpPin = 14;
+const int flatPin = 14;
+int sharp;
+int flat;
+
 void noteOn(byte channel, byte pitch, byte velocity) {
   MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
   MIDIUSB.write(noteOn);
@@ -109,8 +112,8 @@ void eRead(int out1, int out2) {
   }
 }
 int changeOctave(){
-  buttonState = digitalRead(buttonPin);
-  if (buttonState == HIGH) {
+  buttonState = digitalRead(octavePin);
+  if (buttonState == LOW) {
     return 7;
   } 
   else {
@@ -120,8 +123,10 @@ int changeOctave(){
 
 
 void setup(){
-  //Setup button's pin
-  pinMode (buttonPin, INPUT);
+  //Setup buttons' pin
+  pinMode (octavePin, INPUT);
+  pinMode (sharpPin, INPUT);
+  pinMode (flatPin, INPUT);
   //Setup encoders' pins
   pinMode (outputA,INPUT);
   pinMode (outputB,INPUT);
@@ -129,15 +134,11 @@ void setup(){
   pinMode (outputD,INPUT);
   pinMode (outputE,INPUT);
   pinMode (outputF,INPUT);
-  pinMode (outputG,INPUT);
-  pinMode (outputH,INPUT);
   
-  // Reads the initial state of the outputA~G
+  // Reads the initial state of the outputA, C, E
   aLastState = digitalRead(outputA); 
   cLastState = digitalRead(outputC); 
   eLastState = digitalRead(outputE);
-  gLastState = digitalRead(outputG);
-  
   Serial.begin (9600);
 }
 
@@ -147,12 +148,14 @@ void loop(){
   _octave = changeOctave();
   eRead(outputA, outputB);
   _note = _key+stepArr[(int)((double) counterS/40*7)]+60;
-  //Serial.println(_note);  
+  sharp = digitalRead(sharpPin);
+  flat = digitalRead(flatPin);
+  _note += flat*-1 + sharp;
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
     while (counterP != 0){
-      eRead(outputC, outputD);
+        eRead(outputC, outputD);
     }
     noteOff(0, _note, 64);
   }
