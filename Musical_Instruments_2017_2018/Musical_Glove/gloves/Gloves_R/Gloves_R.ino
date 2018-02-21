@@ -9,6 +9,9 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
+const int buttonPin = 2;     // the number of the pushbutton pin
+int buttonState = 0;         // variable for reading the pushbutton status
+
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
@@ -38,12 +41,18 @@ void setup() {
 }
 
 int color;
+  pinMode(ledPin, OUTPUT);
+  // initialize the pushbutton pin as an input:
+  pinMode(buttonPin, INPUT);
 
 void loop() {
   color = get_colors();
   color_to_note(color);
   delay(1500);
+  buttonState = digitalRead(buttonPin);
 }
+
+
 
 int get_colors(){
   uint16_t clear, red, green, blue;
@@ -138,6 +147,14 @@ void color_to_note(int c) {
       break;
   }
 }
+
+void button_press (bool x){
+  if (buttonState == HIGH) {
+    43 d
+  } else {
+    // turn LED off:
+    digitalWrite(ledPin, LOW);
+  }
 
 String notes[] = {
   "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
