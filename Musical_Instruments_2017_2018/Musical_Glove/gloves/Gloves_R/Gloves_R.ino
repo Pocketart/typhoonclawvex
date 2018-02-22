@@ -1,7 +1,7 @@
 // Iron Man Gloves right hand
 
-//#include <AltSoftSerial.h>
-//AltSoftSerial BTSerial;
+#include <AltSoftSerial.h>
+AltSoftSerial BTSerial;
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <Math.h>
@@ -9,8 +9,9 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPin = 2;     // the number of the pushbutton pin
-int buttonState = 0;         // variable for reading the pushbutton status
+int RawValueButton = 0;
+int sharp = 0;
+int flat = 0;
 
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
@@ -41,20 +42,27 @@ void setup() {
 }
 
 int color;
-  pinMode(ledPin, OUTPUT);
-  // initialize the pushbutton pin as an input:
-  pinMode(buttonPin, INPUT);
 
 void loop() {
   color = get_colors();
   color_to_note(color);
   delay(1500);
-  buttonState = digitalRead(buttonPin);
+  RawValueButton = digitalRead(digIn1);
+  sharp = digitalRead(digIn3);
+  flat = digitalRead(digIn4);
+  _note += sharp + flat*-1;
+  if(RawValueButton == LOW){
+    noteOn(0, _note, 100);
+    MIDIUSB.flush();
+    while(RawValueButton==LOW){
+      delay(1);
+      RawValueButton = digitalRead(digIn1);
+    }
+  }  
+
 }
 
-
-
-int get_colors(){
+int get_colors(){t
   uint16_t clear, red, green, blue;
   tcs.getRawData(&red, &green, &blue, &clear);
   
@@ -145,23 +153,97 @@ void color_to_note(int c) {
     case 6:
       playNote("B", 4, 300);   
       break;
+      if(isblack == null){
+        switch(y)
+        {
+        case 0:
+          playNote("C", 4, 300);
+          break;
+        case 1:
+          playNote("D", 4, 300);
+          break;
+        case 2:
+          playNote("E", 4, 300);
+          break;
+        case 3: 
+          playNote("F", 4, 300);
+          break;
+        case 4:
+          playNote("G", 4, 300);
+          break;
+        case 5:
+          playNote("A", 4, 300);
+          break;
+        case 6:
+          playNote("B", 4, 300);   
+          break;
+        }
+      }
+
+      else if(isblack == true){ // sharp
+        switch(y)
+        {
+        case 0:
+          playNote("C#", 4, 300);
+          break;
+        case 1:
+          playNote("D#", 4, 300);
+          break;
+        case 2:
+          playNote("E", 4, 300);
+          break;
+        case 3: 
+          playNote("F#", 4, 300);
+          break;
+        case 4:
+          playNote("G#", 4, 300);
+          break;
+        case 5:
+          playNote("A#", 4, 300);
+          break;
+        case 6:
+          playNote("B", 4, 300);   
+          break;
+        }
+      }
+
+      else if(isblack == false){ // flat
+        switch(y)
+        {
+        case 0:
+          playNote("C", 4, 300);
+          break;
+        case 1:
+          playNote("C#", 4, 300);
+          break;
+        case 2:
+          playNote("D#", 4, 300);
+          break;
+        case 3: 
+          playNote("F", 4, 300);
+          break;
+        case 4:
+          playNote("F#", 4, 300);
+          break;
+        case 5:
+          playNote("G#", 4, 300);
+          break;
+        case 6:
+          playNote("A#", 4, 300);   
+          break;
+        }
+      }
   }
 }
 
-void button_press (bool x){
-  if (buttonState == HIGH) {
-    43 d
-  } else {
-    // turn LED off:
-    digitalWrite(ledPin, LOW);
-  }
 
 String notes[] = {
   "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 int index;
 
 void noteOn(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity      };
   MIDIUSB.write(noteOn);
 }
 
