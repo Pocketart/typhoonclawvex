@@ -28,12 +28,12 @@ const int outputE = 6;
 const int outputF = 7;
 
 // Button for octave
-const int octavePin = 10;
-int buttonState = 0;
+const int octave6 = 18;
+const int octave7 = 19;
 
 //Button for sharp/flat
-const int sharpPin = 14;
-const int flatPin = 14;
+const int sharpPin = 20;
+const int flatPin = 21;
 int sharp;
 int flat;
 
@@ -111,20 +111,13 @@ void eRead(int out1, int out2) {
   gLastState = state;
   }
 }
-int changeOctave(){
-  buttonState = digitalRead(octavePin);
-  if (buttonState == LOW) {
-    return 7;
-  } 
-  else {
-    return 6;
-  }
-}
-
 
 void setup(){
+  Serial.begin (9600);
+  
   //Setup buttons' pin
-  pinMode (octavePin, INPUT);
+  pinMode (octave6, INPUT);
+  pinMode (octave7, INPUT);
   pinMode (sharpPin, INPUT);
   pinMode (flatPin, INPUT);
   //Setup encoders' pins
@@ -139,24 +132,23 @@ void setup(){
   aLastState = digitalRead(outputA); 
   cLastState = digitalRead(outputC); 
   eLastState = digitalRead(outputE);
-  Serial.begin (9600);
 }
 
 void loop(){
   eRead(outputE, outputF);
-  if(counterG>13){
+  if(counterG > 13){
     counterG = 13;
   }
   _key = keyStep[(int)((double) counterG/13*7)];
-  _octave = changeOctave();
+  _octave = digitalRead(octave6)*6 + digitalRead(octave7)*7;
   eRead(outputA, outputB);
   if(counterS > 40){
     counterS = 40;
   }
-  _note = _key+stepArr[(int)((double) counterS/40*7)]+60;
+  _note = _key + stepArr[(int)((double) counterS/40*7)] + 60;
   sharp = digitalRead(sharpPin);
   flat = digitalRead(flatPin);
-  //_note += flat*-1 + sharp;
+  _note += flat*-1 + sharp;
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
