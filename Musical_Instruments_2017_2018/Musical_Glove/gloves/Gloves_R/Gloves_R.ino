@@ -241,7 +241,7 @@ String notes[] = {
   "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 int index;
 
-void noteOn(byte channel, byte pitch, byte velocity) {
+void noteOn(int cmd, int pitch, int velocity) {
   MIDIEvent noteOn = {
     0x09, 0x90 | channel, pitch, velocity      };
   MIDIUSB.write(noteOn);
