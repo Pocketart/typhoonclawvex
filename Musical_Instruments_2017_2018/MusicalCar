@@ -144,17 +144,24 @@ void setup(){
 
 void loop(){
   eRead(outputE, outputF);
-  _key = keyStep[(int)((double) counterG/20*7)];
+  if(counterG>13){
+    counterG = 13;
+  }
+  _key = keyStep[(int)((double) counterG/13*7)];
   _octave = changeOctave();
   eRead(outputA, outputB);
+  if(counterS > 40){
+    counterS = 40;
+  }
   _note = _key+stepArr[(int)((double) counterS/40*7)]+60;
   sharp = digitalRead(sharpPin);
   flat = digitalRead(flatPin);
-  _note += flat*-1 + sharp;
+  //_note += flat*-1 + sharp;
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
     while (counterP != 0){
+        eRead(outputA, outputB);
         eRead(outputC, outputD);
     }
     noteOff(0, _note, 64);
