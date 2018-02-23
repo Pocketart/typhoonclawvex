@@ -258,11 +258,5 @@ void playNote(String _note, int octave, int t){
       index = i;
     }
   }
-  noteOn(0, index+octave*12, 64);
-  MIDIUSB.flush();
-  delay(t);
-
-  noteOff(0, index+octave*12, 64);
-  MIDIUSB.flush();
 }
 

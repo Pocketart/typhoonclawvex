@@ -1,32 +1,24 @@
-#include <pitchToFrequency.h>
-#include <pitchToNote.h>
-#include <frequencyToNote.h>
-#include <MIDIUSB.h>
-
 // Iron Man Gloves right hand
 
 #include <AltSoftSerial.h>
 AltSoftSerial BTSerial;
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
+#include <Math.h>
 #include <MIDI.h>
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPinSharp = 2;
-const int buttonPinFlat = 3;// the number of the pushbutton pin
-int buttonStateSharp = 0; 
-int buttonStateFlat = 0; // variable for reading the pushbutton status
+int RawValueButton = 0;
+int sharp = 0;
+int flat = 0;
+
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
 void setup() {
   Serial.begin(9600);
   Serial.println("Color Sensor Test!");
-  pinMode(buttonPinSharp, INPUT);
-  pinMode(buttonPinFlat, INPUT);
-
-
 
   if (tcs.begin()) {
     Serial.println("Found sensor");
@@ -41,8 +33,11 @@ void setup() {
     float x = i;
     x /= 255;
     x = pow(x, 2.5);
-    x *= 255;  
-    gammatable[i] = 255 - x;
+    x *= 255;
+      
+      gammatable[i] = 255 - x;
+//      gammatable[i] = x;      
+//    Serial.println(gammatable[i]);
   }
 }
 
@@ -50,27 +45,31 @@ int color;
 
 void loop() {
   color = get_colors();
-  
+  color_to_note(color);
   delay(1500);
-  buttonStateSharp = digitalRead(buttonPinSharp);
-  buttonStateFlat = digitalRead(buttonPinFlat);
-  if (buttonStateSharp == HIGH) {
-    // turn LED on:
-    color_to_note_sharp(color);
-  } 
-  else if(buttonStateFlat == HIGH) {
-    color_to_note_flat(color);
-  }
-  else{
-    // turn LED off:
-    color_to_note_normal(color);
-  }
+  RawValueButton = digitalRead(digIn1);
+  sharp = digitalRead(digIn3);
+  flat = digitalRead(digIn4);
+  _note += sharp + flat*-1;
+  if(RawValueButton == LOW){
+    noteOn(0, _note, 100);
+    MIDIUSB.flush();
+    while(RawValueButton==LOW){
+      delay(1);
+      RawValueButton = digitalRead(digIn1);
+    }
+  }  
 
 }
 
-int get_colors(){
+int get_colors(){t
   uint16_t clear, red, green, blue;
   tcs.getRawData(&red, &green, &blue, &clear);
+  
+//  Serial.print("C:\t"); Serial.print(clear);
+//  Serial.print("\tR:\t"); Serial.print(red);
+//  Serial.print("\tG:\t"); Serial.print(green);
+//  Serial.print("\tB:\t"); Serial.print(blue);
 
   // Figure out some basic RGB for visualization
   uint32_t sum = clear;
@@ -83,7 +82,7 @@ int get_colors(){
   Serial.print("\tG:\t"); Serial.print((int)g); 
   Serial.print("\tB:\t"); Serial.print((int)b);
 
-  const int sizeRow = 7; // seven colors
+  const int sizeRow = 9; // nine colors
   const int sizeCol = 3; // RGB
   int constanterror = 9;
   bool redMatch = false;
@@ -97,10 +96,12 @@ int get_colors(){
     {90, 118, 57}, // green
     {73, 92, 110}, // blue
     {105, 80, 89}, // indigo
-    {127, 67, 83} // violet
+    {127, 67, 83}, // violet
+    {117, 97, 66}, // black (very close to white????)
+    {105, 95, 70} // white
   }; 
-  String colorary [7] = {"red", "orange", "yellow", "green", "blue", "indigo", "violet"};
-  for (int y = 0; y < 7; y++)
+  String colorary [9] = {"red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"};
+  for (int y = 0; y < 9; y++)
   {
     redMatch = false;
     greenMatch = false;
@@ -120,7 +121,7 @@ int get_colors(){
     if ((redMatch == true) && (greenMatch == true) && (blueMatch == true))
     {
       Serial.print("\t");
-      Serial.println(colorary[y]);
+      Serial.print(colorary[y]);
       return y; // return color 
       break;
     }
@@ -129,59 +130,59 @@ int get_colors(){
   return -1; // no color detected
 }
 
-String notes[] = {
-  "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
-int index;
-
-void noteOn(byte channel, byte pitch, byte velocity) {
-  midiEventPacket_t noteOn = {
-    0x09, 0x90 | channel, pitch, velocity      };
-  MidiUSB.sendMIDI(noteOn);
-}
-
-void noteOff(byte channel, byte pitch, byte velocity) {
-  midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
-  MidiUSB.sendMIDI(noteOff);
-}
-
-void playNote(String _note, int octave, int t){
-  for(int i=0; i<12; i++){
-    if(_note.equals(notes[i])){
-      index = i;
-    }
-  }
-}
- 
-int octave = 4;
-void color_to_note_normal(int c) {
+void color_to_note(int c) {
   switch(c){
     case 0:
-      playNote("C", octave, 300);
+      playNote("C", 4, 300);
       break;
     case 1:
-      playNote("D", octave, 300);
+      playNote("D", 4, 300);
       break;
     case 2:
-      playNote("E", octave, 300);
+      playNote("E", 4, 300);
       break;
     case 3: 
-      playNote("F", octave, 300);
+      playNote("F", 4, 300);
       break;
     case 4:
-      playNote("G", octave, 300);
+      playNote("G", 4, 300);
       break;
     case 5:
-      playNote("A", octave, 300);
+      playNote("A", 4, 300);
       break;
     case 6:
-      playNote("B", octave, 300);   
+      playNote("B", 4, 300);   
       break;
-  }
-}
+      if(isblack == null){
+        switch(y)
+        {
+        case 0:
+          playNote("C", 4, 300);
+          break;
+        case 1:
+          playNote("D", 4, 300);
+          break;
+        case 2:
+          playNote("E", 4, 300);
+          break;
+        case 3: 
+          playNote("F", 4, 300);
+          break;
+        case 4:
+          playNote("G", 4, 300);
+          break;
+        case 5:
+          playNote("A", 4, 300);
+          break;
+        case 6:
+          playNote("B", 4, 300);   
+          break;
+        }
+      }
 
-
-void color_to_note_sharp(int c){
-    switch(c){
+      else if(isblack == true){ // sharp
+        switch(y)
+        {
         case 0:
           playNote("C#", 4, 300);
           break;
@@ -206,8 +207,8 @@ void color_to_note_sharp(int c){
         }
       }
 
-void color_to_note_flat(int c){ // flat
-        switch(c)
+      else if(isblack == false){ // flat
+        switch(y)
         {
         case 0:
           playNote("C", 4, 300);
@@ -232,3 +233,36 @@ void color_to_note_flat(int c){ // flat
           break;
         }
       }
+  }
+}
+
+
+String notes[] = {
+  "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+int index;
+
+void noteOn(int cmd, int pitch, int velocity) {
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity      };
+  MIDIUSB.write(noteOn);
+}
+
+void noteOff(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MIDIUSB.write(noteOff);
+}
+
+void playNote(String _note, int octave, int t){
+  for(int i=0; i<12; i++){
+    if(_note.equals(notes[i])){
+      index = i;
+    }
+  }
+  noteOn(0, index+octave*12, 64);
+  MIDIUSB.flush();
+  delay(t);
+
+  noteOff(0, index+octave*12, 64);
+  MIDIUSB.flush();
+}
+
