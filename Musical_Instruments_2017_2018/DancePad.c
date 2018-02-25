@@ -12,14 +12,14 @@ int lTom = 8;
 int crash = 9;
 
 // Set up default variables for input status
-int valbass = 0;
+int valBass = 0;
 int valhHat = 0;
 int valhTom = 0;
 int valmTom = 0;
-int valride = 0;
-int valsnare = 0;
+int valRide = 0;
+int valSnare = 0;
 int vallTom = 0;
-int valcrash = 0;
+int valCrash = 0;
 
 // variable to store the value read
  
@@ -36,63 +36,36 @@ void setup()
   pinMode(crash, INPUT);
   //  setup serial
   
+  valBass = digitalRead(bass);// read the input pin
+  valhHat = digitalRead(hHat);// read the input pin
+  valhTom = digitalRead(bass);// read the input pin
+  valmTom = digitalRead(hHat);// read the input pin
+  valRide = digitalRead(bass);// read the input pin
+  valSnare = digitalRead(hHat);// read the input pin
+  vallTom = digitalRead(bass);// read the input pin
+  valCrash = digitalRead(hHat);// read the input pin
+  
 }
 
 void loop()
 {
-  //val = analogRead(analogPin);
-  valbass = digitalRead(bass);// read the input pin
-  Serial.println(valbass);  
-  if (valbass!=0){
-    
-  }
-  
-  
-  valhHat = digitalRead(hHat);// read the input pin
-  Serial.println(valhHat);  
-  if (valhHat!=0){
-    
-  }
-  
-   valhTom = digitalRead(hTom);// read the input pin
-  Serial.println(valhTom); 
-  if (valhTom!=0){
-    
-  }
-   
-  
-   valmTom = digitalRead(mTom);// read the input pin
-  Serial.println(valmTom);  
-  if (valmTom!=0){
-    
-  }
-  
-   valride = digitalRead(ride);// read the input pin
-  Serial.println(valride); 
-  if (valride!=0){
-    
-  }
-  
-   valsnare = digitalRead(snare);// read the input pin
-  Serial.println(valsnare); 
-  if (valsnare!=0){
-    
-  }
-  
-   vallTom= digitalRead(lTom);// read the input pin
+  Serial.println("Bass button");
+  Serial.println(valBass);
+  Serial.println("high hat");
+  Serial.println(valhHat);
+  Serial.println("high tom");
+  Serial.println(valhTom);
+  Serial.println("med tom");
+  Serial.println(valmTom);
+  Serial.println("ride");
+  Serial.println(valRide);
+  Serial.println("l snare");
+  Serial.println(valSnare); 
+  Serial.println("l tome");
   Serial.println(vallTom); 
-  if (vallTom!=0){
-    
-  }  
+  Serial.println("crash");
+  Serial.println(valCrash);
+  //delay('40');
   
-   valcrash = digitalRead(crash);// read the input pin
-  Serial.println(valcrash);
-  if (valcrash!=0){
-    
-  } 
-
- 
-  
-// debug value
 
 }
