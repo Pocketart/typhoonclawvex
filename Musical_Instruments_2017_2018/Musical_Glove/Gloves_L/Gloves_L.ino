@@ -162,7 +162,7 @@ void playNote(String _note, int octave, int t){
   MIDIUSB.flush();
 }
  
-int octave = 4;
+int octave = 3;
 void color_to_note_normal(int c) {
   Serial.print("normal note");
   switch(c){
