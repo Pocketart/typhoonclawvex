@@ -233,7 +233,7 @@ void color_to_note_sharp(int c){
     playNote("A#", octave, 300);
     break;
   case 6:
-    playNote("C", octave, 300);   
+    playNote("C", octave + 1, 300);   
     break;
   }
 }
@@ -242,7 +242,7 @@ void color_to_note_flat(int c){ // flat
   switch(c)
   {
   case 0:
-    playNote("B", 3, 300);
+    playNote("B", ,octave - 1 300);
     break;
   case 1:
     playNote("C#", octave, 300);
