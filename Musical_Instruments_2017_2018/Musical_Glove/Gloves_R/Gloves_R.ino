@@ -13,8 +13,8 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPinSharp = 2;
-const int buttonPinFlat = 3;// the number of the pushbutton pin
+const int buttonPinSharp = 7;
+const int buttonPinFlat = 8;// the number of the pushbutton pin
 int buttonStateSharp = 0; 
 int buttonStateFlat = 0; // variable for reading the pushbutton status
 
@@ -50,24 +50,24 @@ int color;
 
 void loop() {
   color = get_colors();
-  
+
   buttonStateSharp = digitalRead(buttonPinSharp);
   buttonStateFlat = digitalRead(buttonPinFlat);
-  if (buttonStateSharp == HIGH) {
+  if (buttonStateSharp == LOW) {
     // turn LED on:
-    Serial.println("sharp");
-    color_to_note_normal(color);
-  } 
-  else if(buttonStateFlat == HIGH) {
     Serial.println("flat");
     color_to_note_flat(color);
+  } 
+  else if(buttonStateFlat == LOW) {
+    Serial.println("sharp");
+    color_to_note_sharp(color);
   }
   else{
     // turn LED off:
     Serial.println("normal");
     color_to_note_normal(color);
   }
-    delay(500);
+  delay(500);
 
 
 }
@@ -79,13 +79,21 @@ int get_colors(){
   // Figure out some basic RGB for visualization
   uint32_t sum = clear;
   float r, g, b;
-  r = red; r /= sum;
-  g = green; g /= sum;
-  b = blue; b /= sum;
-  r *= 256; g *= 256; b *= 256;
-  Serial.print("\tR:\t"); Serial.print((int)r);
-  Serial.print("\tG:\t"); Serial.print((int)g); 
-  Serial.print("\tB:\t"); Serial.print((int)b);
+  r = red; 
+  r /= sum;
+  g = green; 
+  g /= sum;
+  b = blue; 
+  b /= sum;
+  r *= 256; 
+  g *= 256; 
+  b *= 256;
+  Serial.print("\tR:\t"); 
+  Serial.print((int)r);
+  Serial.print("\tG:\t"); 
+  Serial.print((int)g); 
+  Serial.print("\tB:\t"); 
+  Serial.print((int)b);
 
   const int sizeRow = 7; // seven colors
   const int sizeCol = 3; // RGB
@@ -95,15 +103,29 @@ int get_colors(){
   bool blueMatch = false;
   long int ary[sizeRow][sizeCol] =
   { 
-    {193, 46, 44}, // red
-    {161, 62, 36}, // orange
-    {119, 93, 35}, // yellow
-    {90, 118, 57}, // green
-    {65, 83, 105}, // blue
-    {102, 69, 86}, // indigo
-    {127, 67, 83} // violet
+    {
+      193, 46, 44    }
+    , // red
+    {
+      161, 62, 36    }
+    , // orange
+    {
+      119, 93, 35    }
+    , // yellow
+    {
+      90, 118, 57    }
+    , // green
+    {
+      65, 83, 105    }
+    , // blue
+    {
+      102, 69, 86    }
+    , // indigo
+    {
+      127, 67, 83    } // violet
   }; 
-  String colorary [7] = {"red", "orange", "yellow", "green", "blue", "indigo", "violet"};
+  String colorary [7] = {
+    "red", "orange", "yellow", "green", "blue", "indigo", "violet"  };
   for (int y = 0; y < 7; y++)
   {
     redMatch = false;
@@ -139,12 +161,13 @@ int index;
 
 void noteOn(byte channel, byte pitch, byte velocity) {
   MIDIEvent noteOn = {
-    0x09, 0x90 | channel, pitch, velocity      };
+    0x09, 0x90 | channel, pitch, velocity        };
   MIDIUSB.write(noteOn);
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity  };
   MIDIUSB.write(noteOff);
 }
 
@@ -157,89 +180,90 @@ void playNote(String _note, int octave, int t){
   noteOn(0, index+octave*12, 64);
   MIDIUSB.flush();
   delay(t);
-
+  
   noteOff(0, index+octave*12, 64);
   MIDIUSB.flush();
 }
- 
+
 int octave = 4;
 void color_to_note_normal(int c) {
   Serial.print("normal note");
   switch(c){
-    case 0:
-      playNote("C", octave, 400);
-      break;
-    case 1:
-      playNote("D", octave, 400);
-      break;
-    case 2:
-      playNote("E", octave, 400);
-      break;
-    case 3: 
-      playNote("F", octave, 400);
-      break;
-    case 4:
-      playNote("G", octave, 400);
-      break;
-    case 5:
-      playNote("A", octave, 400);
-      break;
-    case 6:
-      playNote("B", octave, 400);   
-      break;
+  case 0:
+    playNote("C", octave, 650);
+    break;
+  case 1:
+    playNote("D", octave, 500);
+    break;
+  case 2:
+    playNote("E", octave, 500);
+    break;
+  case 3: 
+    playNote("F", octave, 500);
+    break;
+  case 4:
+    playNote("G", octave, 500);
+    break;
+  case 5:
+    playNote("A", octave, 500);
+    break;
+  case 6:
+    playNote("B", octave, 500);   
+    break;
   }
 }
 
 
 void color_to_note_sharp(int c){
-    switch(c){
-        case 0:
-          playNote("C#", octave, 400);
-          break;
-        case 1:
-          playNote("D#", octave, 400);
-          break;
-        case 2:
-          playNote("E", octave, 400);
-          break;
-        case 3: 
-          playNote("F#", octave, 400);
-          break;
-        case 4:
-          playNote("G#", octave, 400);
-          break;
-        case 5:
-          playNote("A#", octave, 400);
-          break;
-        case 6:
-          playNote("B", octave, 400);   
-          break;
-        }
-      }
+  switch(c){
+  case 0:
+    playNote("C#", octave, 300);
+    break;
+  case 1:
+    playNote("D#", octave, 300);
+    break;
+  case 2:
+    playNote("F", octave, 300);
+    break;
+  case 3: 
+    playNote("F#", octave, 300);
+    break;
+  case 4:
+    playNote("G#", octave, 300);
+    break;
+  case 5:
+    playNote("A#", octave, 300);
+    break;
+  case 6:
+    playNote("C", octave, 300);   
+    break;
+  }
+}
 
 void color_to_note_flat(int c){ // flat
-        switch(c)
-        {
-        case 0:
-          playNote("C", octave, 300);
-          break;
-        case 1:
-          playNote("C#", octave, 300);
-          break;
-        case 2:
-          playNote("D#", octave, 300);
-          break;
-        case 3: 
-          playNote("F", octave, 300);
-          break;
-        case 4:
-          playNote("F#", octave, 300);
-          break;
-        case 5:
-          playNote("G#", octave, 300);
-          break;
-        case 6:
-          playNote("A#", octave, 300);   
-          break;
-        }
-      }
+  switch(c)
+  {
+  case 0:
+    playNote("B", 3, 300);
+    break;
+  case 1:
+    playNote("C#", octave, 300);
+    break;
+  case 2:
+    playNote("D#", octave, 300);
+    break;
+  case 3: 
+    playNote("E", octave, 300);
+    break;
+  case 4:
+    playNote("F#", octave, 300);
+    break;
+  case 5:
+    playNote("G#", octave, 300);
+    break;
+  case 6:
+    playNote("A#", octave, 300);   
+    break;
+  }
+}
+
