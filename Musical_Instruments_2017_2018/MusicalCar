@@ -4,7 +4,7 @@
 String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 int stepArr[] = {0,2,4,5,7,9,11,12};
 int keyStep[] = {10, 5, 0, 7, 2, 9, 4}; //A#, F, C, G, D, A, E
-int _note, _key, _octave;
+int _note, _key, _octave = 60;
 int counterS = 0;
 int counterP = 0;
 int counterG = 0;
@@ -149,22 +149,23 @@ void loop(){
   if(counterG > 13){
     counterG = 13;
   }
-  _key = keyStep[(int)((double) counterG/13*7)];
+  _key = keyStep[(int)((double) counterG*-6/13.0+0.5)];
   eRead(outputA, outputB);
   if(counterS > 40){
     counterS = 40;
   }
-  _note = _key + stepArr[(int)((double) counterS/40*7)] + _octave;
+  _note = _key + stepArr[(int)((double) counterS/40*7+0.5)] + 60;
   sharp = digitalRead(sharpPin);
   flat = digitalRead(flatPin);
   _note += flat*-1 + sharp;
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
+    Serial.println(_note);
+    Serial.print("key: ");
+    Serial.println(_key);
     while (counterP != 0){
-        eRead(outputA, outputB);
         eRead(outputC, outputD);
-        eRead(outputE, outputF);
     }
     noteOff(0, _note, 64);
   }
