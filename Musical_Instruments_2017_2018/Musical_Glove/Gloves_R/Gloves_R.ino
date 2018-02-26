@@ -68,8 +68,6 @@ void loop() {
     color_to_note_normal(color);
   }
   delay(500);
-
-
 }
 
 int get_colors(){
@@ -266,4 +264,3 @@ void color_to_note_flat(int c){ // flat
     break;
   }
 }
-
