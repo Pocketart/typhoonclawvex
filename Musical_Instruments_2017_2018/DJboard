@@ -2,8 +2,8 @@
 #include <Math.h>
 #include <MIDI.h>
 
-const int potIn1 = A0;
-const int potIn2 = A1;
+const int potIn1 = A1;
+const int potIn2 = A0;
 const int potIn3 = A2;
 const int potIn4 = A3;
 const int digIn1 = 2;
@@ -18,7 +18,7 @@ int RawValueButton = 0;
 int sharp = 0;
 int flat = 0;
 
-int _note, _key, _range, _volume;
+int _note, _key, _range, _volume, tempnote, tempkey, temprange;
 int count=0;
 int now;
 
@@ -69,17 +69,53 @@ void loop() {
   sharp = digitalRead(digIn3);
   flat = digitalRead(digIn4);
   
-  _key = (int)((double)RawValue1/1023*11);
+  _key = (int)(round((double)RawValue1/1023*11));
   _range = (int)((double)RawValue3/1023*2+4);
-  _note = _key+stepArr[(int)((double)RawValue2/1023*7)]+_range*12;
-  _note += sharp + flat*-1;
-
+  _note = _key+stepArr[(int)(round((double)(1023-RawValue2)/1023*7))]+_range*12;
+  _note += sharp - flat;
+  
+  Serial.print(RawValueButton);
+  Serial.print(" ");
+  Serial.print(sharp);
+  Serial.print(" ");
+  Serial.println(flat);
+  
+  Serial.print(RawValue1);
+  Serial.print(" ");
+  Serial.print(1023-RawValue2);
+  Serial.print(" ");
+  Serial.println(RawValue3);
+  
+  Serial.print(_key);
+  Serial.print(" ");
+  Serial.print(_note);
+  Serial.print(" ");
+  Serial.println(_range);
+  
   if(RawValueButton == LOW){
     noteOn(0, _note, 100);
     MIDIUSB.flush();
     while(RawValueButton==LOW){
       delay(1);
       RawValueButton = digitalRead(digIn1);
+      RawValue1 = analogRead(potIn1);
+      RawValue2 = analogRead(potIn2);
+      RawValue3 = analogRead(potIn3);
+      sharp = digitalRead(digIn3);
+      flat = digitalRead(digIn4);
+      _key = (int)(round((double)RawValue1/1023*11));
+      _range = (int)((double)RawValue3/1023*2+4);
+      tempnote = _key+stepArr[(int)(round((double)(1023-RawValue2)/1023*7))]+_range*12;
+      tempnote += sharp - flat;
+      if(tempnote!=_note){
+        Serial.println("CHANGED");
+        noteOff(0, _note, 100);
+        MIDIUSB.flush();
+        delay(1);
+        _note = tempnote;
+        noteOn(0, _note, 100);
+        MIDIUSB.flush();
+      }
     }
   }  
 
