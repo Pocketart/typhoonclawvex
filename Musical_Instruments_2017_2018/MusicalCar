@@ -17,7 +17,7 @@ int gLastState;
 
 //Steering Wheel Encoder
 const int outputA = 2;
-const int outputB = 3;
+const int outputB = 10; 
 
 //Pedal Encoder
 const int outputC = 4;
@@ -28,8 +28,8 @@ const int outputE = 6;
 const int outputF = 7;
 
 // Button for octave
-const int octave6 = 18;
-const int octave7 = 19;
+const int octave4 = 18;
+const int octave5 = 19;
 
 //Button for sharp/flat
 const int sharpPin = 20;
@@ -112,12 +112,21 @@ void eRead(int out1, int out2) {
   }
 }
 
+void changeOctave(){
+  if(digitalRead(octave4)== 1){
+    _octave = 60;
+  }
+  else if(digitalRead(octave5)==1){
+    _octave = 72;
+  }  
+}
+
 void setup(){
   Serial.begin (9600);
   
   //Setup buttons' pin
-  pinMode (octave6, INPUT);
-  pinMode (octave7, INPUT);
+  pinMode (octave4, INPUT);
+  pinMode (octave5, INPUT);
   pinMode (sharpPin, INPUT);
   pinMode (flatPin, INPUT);
   //Setup encoders' pins
@@ -135,17 +144,17 @@ void setup(){
 }
 
 void loop(){
+  changeOctave();
   eRead(outputE, outputF);
   if(counterG > 13){
     counterG = 13;
   }
   _key = keyStep[(int)((double) counterG/13*7)];
-  _octave = digitalRead(octave6)*6 + digitalRead(octave7)*7;
   eRead(outputA, outputB);
   if(counterS > 40){
     counterS = 40;
   }
-  _note = _key + stepArr[(int)((double) counterS/40*7)] + 60;
+  _note = _key + stepArr[(int)((double) counterS/40*7)] + _octave;
   sharp = digitalRead(sharpPin);
   flat = digitalRead(flatPin);
   _note += flat*-1 + sharp;
@@ -155,6 +164,7 @@ void loop(){
     while (counterP != 0){
         eRead(outputA, outputB);
         eRead(outputC, outputD);
+        eRead(outputE, outputF);
     }
     noteOff(0, _note, 64);
   }
