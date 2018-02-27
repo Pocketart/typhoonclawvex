@@ -1,4 +1,4 @@
-	
+
 #include <Math.h>
 #include <MIDI.h>
 
@@ -9,6 +9,9 @@ const int potIn4 = A3;
 const int digIn1 = 2;
 const int digIn3 = 3;
 const int digIn4 = 4;
+const int digOut6 = 6;
+const int digOut7 = 7;
+const int digOut8 = 8;
 
 int RawValue1 = 0;
 int RawValue2 = 0;
@@ -56,6 +59,10 @@ void setup() {
   pinMode(digIn3, INPUT);
   pinMode(digIn4, INPUT);
   
+  pinMode(digOut6, OUTPUT);
+  pinMode(digOut7, OUTPUT);
+  pinMode(digOut8, OUTPUT);
+  
   Serial.begin(9600);
 }
 
@@ -92,9 +99,13 @@ void loop() {
   Serial.print(" ");
   Serial.println(_range);
   
+  digitalWrite(digOut6, sharp);
+  digitalWrite(digOut8, flat);
+  
   if(RawValueButton == LOW){
     noteOn(0, _note, 100);
     MIDIUSB.flush();
+    digitalWrite(digOut7, HIGH);
     while(RawValueButton==LOW){
       delay(1);
       RawValueButton = digitalRead(digIn1);
@@ -107,6 +118,10 @@ void loop() {
       _range = (int)((double)RawValue3/1023*2+4);
       tempnote = _key+stepArr[(int)(round((double)(1023-RawValue2)/1023*7))]+_range*12;
       tempnote += sharp - flat;
+      
+      digitalWrite(digOut6, sharp);
+      digitalWrite(digOut8, flat);
+      
       if(tempnote!=_note){
         Serial.println("CHANGED");
         noteOff(0, _note, 100);
@@ -117,7 +132,8 @@ void loop() {
         MIDIUSB.flush();
       }
     }
-  }  
+  } 
+  digitalWrite(digOut7, LOW); 
 
   noteOff(0,_note,100);
   MIDIUSB.flush();
