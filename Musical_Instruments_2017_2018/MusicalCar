@@ -161,11 +161,14 @@ void loop(){
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
+    delay(300);
     Serial.println(_note);
     Serial.print("key: ");
     Serial.println(_key);
     while (counterP != 0){
+        eRead(outputA, outputB);
         eRead(outputC, outputD);
+        eRead(outputE, outputF);
     }
     noteOff(0, _note, 64);
   }
