@@ -1,10 +1,13 @@
 #include <MIDI.h>
 #include <MATH.h>
 
-String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
-int stepArr[] = {0,2,4,5,7,9,11,12};
-int keyStep[] = {10, 5, 0, 7, 2, 9, 4}; //A#, F, C, G, D, A, E
-int _note, _key, _octave;
+String notes[] = {
+  "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+int stepArr[] = {
+  0,2,4,5,7,9,11,12};
+int keyStep[] = {
+  10, 5, 0, 7, 2, 9, 4}; //A#, F, C, G, D, A, E
+int _note, _key, _octave = 60;
 int counterS = 0;
 int counterP = 0;
 int counterG = 0;
@@ -17,7 +20,7 @@ int gLastState;
 
 //Steering Wheel Encoder
 const int outputA = 2;
-const int outputB = 3;
+const int outputB = 10; 
 
 //Pedal Encoder
 const int outputC = 4;
@@ -27,30 +30,37 @@ const int outputD = 5;
 const int outputE = 6;
 const int outputF = 7;
 
-//Turing Light Encoder
-const int outputG = 8;
-const int outputH = 9;
+// Button for octave
+const int octave4 = 18;
+const int octave5 = 19;
 
-// Button
-const int buttonPin = 10;
-int buttonState = 0;
+//Button for sharp/flat
+const int sharpPin = 20;
+const int flatPin = 21;
+int sharp;
+int flat;
+
+int count = 0;
+
 void noteOn(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOn = {0x09, 0x90 | channel, pitch, velocity};
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity  };
   MIDIUSB.write(noteOn);
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
-  MIDIEvent noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity  };
   MIDIUSB.write(noteOff);
 }
 
 void playNote(int note, int t){
- noteOn(0, note, 64);
- MIDIUSB.flush();
- delay(t);
- eRead(outputC, outputD); 
- noteOff(0, note, 64);
- MIDIUSB.flush();
+  noteOn(0, note, 64);
+  MIDIUSB.flush();
+  delay(t);
+  eRead(outputC, outputD); 
+  noteOff(0, note, 64);
+  MIDIUSB.flush();
 }
 
 void eRead(int out1, int out2) {
@@ -60,68 +70,76 @@ void eRead(int out1, int out2) {
       if (digitalRead(out2) != state) { 
         counterS ++;
       }
-    else {
-      counterS --;
+      else {
+        counterS --;
+      }
+      Serial.print("PositionS: ");
+      Serial.println(abs(counterS));
     }
-    Serial.print("PositionS: ");
-    Serial.println(abs(counterS));
-  }
-  aLastState = state;
+    aLastState = state;
   }
   if (out1 == 4){
     if (state != cLastState){     
       if (digitalRead(out2) != state) { 
         counterP ++;
       }
-    else {
-      counterP --;
+      else {
+        counterP --;
+      }
+      Serial.print("PositionP: ");
+      Serial.println(counterP);
     }
-    Serial.print("PositionP: ");
-    Serial.println(counterP);
-  }
-  cLastState = state;
+    cLastState = state;
   }
   if (out1 == 6){
     if (state != eLastState){     
       if (digitalRead(out2) != state) { 
         counterG ++;
       }
-    else {
+      else {
         counterG --;
+      }
+      Serial.print("PositionG: ");
+      Serial.println(abs(counterG));
     }
-    Serial.print("PositionG: ");
-    Serial.println(abs(counterG));
-  }
-  eLastState = state;
+    eLastState = state;
   }
   if (out1 == 8){
     if (state != gLastState){
       if (digitalRead(out2) != state){ 
         counterT ++;
       }
-    else {
-      counterT --;
+      else {
+        counterT --;
+      }
+      Serial.print("PositionT: ");
+      Serial.println(counterT);
     }
-    Serial.print("PositionT: ");
-    Serial.println(counterT);
-  }
-  gLastState = state;
-  }
-}
-int changeOctave(){
-  buttonState = digitalRead(buttonPin);
-  if (buttonState == HIGH) {
-    return 7;
-  } 
-  else {
-    return 6;
+    gLastState = state;
   }
 }
 
+void changeOctave(){
+  if(digitalRead(octave5)== 1){
+    count += 1;
+    if (count > 1){
+      _octave = 48;
+      count = 0;
+    }
+    else{
+      _octave = 60;
+    }
+  }  
+}
 
 void setup(){
-  //Setup button's pin
-  pinMode (buttonPin, INPUT);
+  Serial.begin (9600);
+
+  //Setup buttons' pin
+  pinMode (octave4, INPUT);
+  pinMode (octave5, INPUT);
+  pinMode (sharpPin, INPUT);
+  pinMode (flatPin, INPUT);
   //Setup encoders' pins
   pinMode (outputA,INPUT);
   pinMode (outputB,INPUT);
@@ -129,30 +147,36 @@ void setup(){
   pinMode (outputD,INPUT);
   pinMode (outputE,INPUT);
   pinMode (outputF,INPUT);
-  pinMode (outputG,INPUT);
-  pinMode (outputH,INPUT);
-  
-  // Reads the initial state of the outputA~G
+
+  // Reads the initial state of the outputA, C, E
   aLastState = digitalRead(outputA); 
   cLastState = digitalRead(outputC); 
   eLastState = digitalRead(outputE);
-  gLastState = digitalRead(outputG);
-  
-  Serial.begin (9600);
 }
 
 void loop(){
   eRead(outputE, outputF);
-  _key = keyStep[(int)((double) counterG/20*7)];
-  _octave = changeOctave();
+  if(counterG > 13){
+    counterG = 13;
+  }
+  _key = keyStep[(int)((double) counterG*-6/13.0+0.5)];
   eRead(outputA, outputB);
-  _note = _key+stepArr[(int)((double) counterS/40*7)]+60;
-  //Serial.println(_note);  
+  if(counterS > 40){
+    counterS = 40;
+  }
+  changeOctave();
+  _note = _key + stepArr[(int)((double) counterS/40*7+0.5)] + _octave;
+  sharp = digitalRead(sharpPin);
+  flat = digitalRead(flatPin);
+  _note += sharp - flat;
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
+    delay(150);
     while (counterP != 0){
+      eRead(outputA, outputB);
       eRead(outputC, outputD);
+      eRead(outputE, outputF);
     }
     noteOff(0, _note, 64);
   }
