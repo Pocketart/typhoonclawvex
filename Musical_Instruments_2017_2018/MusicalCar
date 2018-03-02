@@ -172,7 +172,6 @@ void loop(){
   eRead(outputC, outputD);
   if(counterP != 0){
     noteOn(0, _note, 64);
-    delay(150);
     while (counterP != 0){
       eRead(outputA, outputB);
       eRead(outputC, outputD);
