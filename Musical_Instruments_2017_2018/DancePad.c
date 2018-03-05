@@ -36,36 +36,40 @@ void setup()
   pinMode(crash, INPUT);
   //  setup serial
   
-  valBass = digitalRead(bass);// read the input pin
-  valhHat = digitalRead(hHat);// read the input pin
-  valhTom = digitalRead(bass);// read the input pin
-  valmTom = digitalRead(hHat);// read the input pin
-  valRide = digitalRead(bass);// read the input pin
-  valSnare = digitalRead(hHat);// read the input pin
-  vallTom = digitalRead(bass);// read the input pin
-  valCrash = digitalRead(hHat);// read the input pin
+
   
 }
 
 void loop()
 {
-  Serial.println("Bass button");
+  valBass = digitalRead(bass);// read the input pin
+  valRide = digitalRead(hHat);// read the input pin
+  valCrash = digitalRead(hTom);// read the input pin
+  valmTom = digitalRead(mTom);// read the input pin
+  vallTom = digitalRead(ride);// read the input pin
+  valhHat = digitalRead(snare);// read the input pin
+  valSnare = digitalRead(lTom);// read the input pin
+  valhTom = digitalRead(crash);// read the input pin
+
+  
+  Serial.print("Bass button ");
   Serial.println(valBass);
-  Serial.println("high hat");
+  Serial.print("high hat ");
   Serial.println(valhHat);
-  Serial.println("high tom");
+  Serial.print("high tom ");
   Serial.println(valhTom);
-  Serial.println("med tom");
+  Serial.print("med tom ");
   Serial.println(valmTom);
-  Serial.println("ride");
+  Serial.print("ride ");
   Serial.println(valRide);
-  Serial.println("l snare");
+  Serial.print("snare ");
   Serial.println(valSnare); 
-  Serial.println("l tome");
+  Serial.print("tome ");
   Serial.println(vallTom); 
-  Serial.println("crash");
+  Serial.print("crash ");
   Serial.println(valCrash);
-  //delay('40');
+  Serial.println();
+  delay(100);
   
 
 }
