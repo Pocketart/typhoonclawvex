@@ -68,10 +68,12 @@ void loop() {
   buttonStateFlat = digitalRead(buttonPinFlat);
   if (buttonStateSharp == LOW) {
     // turn LED on:
+    Serial.println("flat");
     color_to_note_flat(color);
   } 
   else if(buttonStateFlat == LOW) {
     color_to_note_sharp(color);
+    Serial.println("sharp");
   }
   else{
     // turn LED off:
@@ -105,7 +107,7 @@ int get_colors(){
 
   const int sizeRow = 7; // seven colors
   const int sizeCol = 3; // RGB
-  int constanterror = 9;
+  int constanterror = 10;
   bool redMatch = false;
   bool greenMatch = false;
   bool blueMatch = false;
@@ -115,19 +117,19 @@ int get_colors(){
       193, 46, 44    }
     , // red
     {
-      161, 62, 36    }
+      161, 68, 45    }
     , // orange
     {
-      119, 93, 35    }
+      121, 100, 45    }
     , // yellow
     {
       90, 118, 57    }
     , // green
     {
-      65, 83, 105    }
+      72, 92, 105    }
     , // blue
     {
-      102, 69, 86    }
+      102, 81, 87    }
     , // indigo
     {
       127, 67, 83    } // violet
@@ -195,7 +197,6 @@ void playNote(String _note, int octave, int t){
     MIDIUSB.flush();
   }
   
-  delay(t);
   if(sameColorCount == 0){
     noteOn(0, index+octave*12, 64);
     MIDIUSB.flush();
