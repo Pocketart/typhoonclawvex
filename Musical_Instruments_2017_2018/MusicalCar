@@ -1,13 +1,12 @@
 #include <MIDI.h>
 #include <MATH.h>
 
-String notes[] = {
-  "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
-int stepArr[] = {
-  0,2,4,5,7,9,11,12};
-int keyStep[] = {
-  10, 5, 0, 7, 2, 9, 4}; //A#, F, C, G, D, A, E
+String notes[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+int stepArr[] = {0,2,4,5,7,9,11,12};
+int keyStep[] = {10, 5, 0, 7, 2, 9, 4};//A#, F, C, G, D, A, E
+String displayKey[] = {"A#","F","C","G","D","A","E"};
 int _note, _key, _octave = 60;
+int oldKey = -1,oldNote = -1;
 int counterS = 0;
 int counterP = 0;
 int counterG = 0;
@@ -73,8 +72,8 @@ void eRead(int out1, int out2) {
       else {
         counterS --;
       }
-      Serial.print("PositionS: ");
-      Serial.println(abs(counterS));
+      /*Serial.print("PositionS: ");
+      Serial.println(abs(counterS));*/
     }
     aLastState = state;
   }
@@ -86,8 +85,8 @@ void eRead(int out1, int out2) {
       else {
         counterP --;
       }
-      Serial.print("PositionP: ");
-      Serial.println(counterP);
+      /*Serial.print("PositionP: ");
+      Serial.println(counterP);*/
     }
     cLastState = state;
   }
@@ -99,8 +98,8 @@ void eRead(int out1, int out2) {
       else {
         counterG --;
       }
-      Serial.print("PositionG: ");
-      Serial.println(abs(counterG));
+      /*Serial.print("PositionG: ");
+      Serial.println(abs(counterG));*/
     }
     eLastState = state;
   }
@@ -112,8 +111,8 @@ void eRead(int out1, int out2) {
       else {
         counterT --;
       }
-      Serial.print("PositionT: ");
-      Serial.println(counterT);
+      /*Serial.print("PositionT: ");
+      Serial.println(counterT);*/
     }
     gLastState = state;
   }
@@ -159,20 +158,29 @@ void loop(){
   if(counterG > 13){
     counterG = 13;
   }
+  oldKey = _key;
   _key = keyStep[(int)((double) counterG*-6/13.0+0.5)];
   eRead(outputA, outputB);
   if(counterS > 40){
     counterS = 40;
   }
   changeOctave();
+  oldNote = _note;
   _note = _key + stepArr[(int)((double) counterS/40*7+0.5)] + _octave;
   sharp = digitalRead(sharpPin);
   flat = digitalRead(flatPin);
   _note += sharp - flat;
   eRead(outputC, outputD);
+  if(_key != oldKey || _note != oldNote){
+    //Serial.println("Key:" );
+    Serial.println(notes[_note - _octave]);
+    //Serial.println("Note: ");
+    Serial.println(displayKey[(int)((double) counterG*-6/13.0+0.5)]);
+  }
+  delay(100);
   if(counterP != 0){
     noteOn(0, _note, 64);
-    delay(150);
+    delay(300);
     while (counterP != 0){
       eRead(outputA, outputB);
       eRead(outputC, outputD);

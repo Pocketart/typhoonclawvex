@@ -3,7 +3,7 @@
 #include <frequencyToNote.h>
 #include <MIDIUSB.h>
 
-// Iron Man Gloves right hand
+// Iron Man Gloves right hand (reverse)
 
 //#include <AltSoftSerial.h>
 //AltSoftSerial BTSerial;
@@ -13,8 +13,8 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPinSharp = 7;
-const int buttonPinFlat = 8;// the number of the pushbutton pin
+const int buttonPinSharp = 7; //yellow tape
+const int buttonPinFlat = 8;// the number of the pushbutton pin  //red tape
 int buttonStateSharp = 0; 
 int buttonStateFlat = 0; // variable for reading the pushbutton status
 
@@ -46,10 +46,23 @@ void setup() {
   }
 }
 
-int color;
+int color = 99;
+int prevColor = 99;
+bool continuousNote = true;
+int sameColorCount = 0;
 
 void loop() {
   color = get_colors();
+  Serial.println(color);
+  if(prevColor == color){
+    continuousNote = true;
+    sameColorCount += 1;
+  }
+  else{
+    continuousNote = false;
+    sameColorCount = 0;
+  }
+  prevColor = color; 
 
   buttonStateSharp = digitalRead(buttonPinSharp);
   buttonStateFlat = digitalRead(buttonPinFlat);
@@ -59,15 +72,16 @@ void loop() {
     color_to_note_flat(color);
   } 
   else if(buttonStateFlat == LOW) {
-    Serial.println("sharp");
     color_to_note_sharp(color);
+    Serial.println("sharp");
   }
   else{
     // turn LED off:
-    Serial.println("normal");
     color_to_note_normal(color);
+    Serial.println("normal");
+
   }
-  delay(500);
+  delay(400);
 }
 
 int get_colors(){
@@ -95,7 +109,7 @@ int get_colors(){
 
   const int sizeRow = 7; // seven colors
   const int sizeCol = 3; // RGB
-  int constanterror = 9;
+  int constanterror = 10;
   bool redMatch = false;
   bool greenMatch = false;
   bool blueMatch = false;
@@ -105,19 +119,19 @@ int get_colors(){
       193, 46, 44    }
     , // red
     {
-      161, 62, 36    }
+      161, 68, 45    }
     , // orange
     {
-      119, 93, 35    }
+      121, 100, 45    }
     , // yellow
     {
       90, 118, 57    }
     , // green
     {
-      65, 83, 105    }
+      72, 92, 105    }
     , // blue
     {
-      102, 69, 86    }
+      102, 81, 87    }
     , // indigo
     {
       127, 67, 83    } // violet
@@ -175,92 +189,115 @@ void playNote(String _note, int octave, int t){
       index = i;
     }
   }
-  noteOn(0, index+octave*12, 64);
-  MIDIUSB.flush();
-  delay(t);
   
-  noteOff(0, index+octave*12, 64);
-  MIDIUSB.flush();
+//  noteOn(0, index+octave*12, 64);
+//  MIDIUSB.flush();
+  
+  if(continuousNote == false){
+    Serial.println("note off");
+    noteOff(0, index+octave*12, 64);
+    MIDIUSB.flush();
+  }
+  
+  if(sameColorCount == 0){
+    noteOn(0, index+octave*12, 64);
+    MIDIUSB.flush();
+  }
 }
 
 int octave = 3;
 void color_to_note_normal(int c) {
-  Serial.print("normal note");
+  Serial.println("PLAY NORMAL");
   switch(c){
   case 0:
-    playNote("C", octave, 650);
+    playNote("C", octave, 400);
     break;
   case 1:
-    playNote("D", octave, 500);
+    playNote("D", octave, 400);
     break;
   case 2:
-    playNote("E", octave, 500);
+    playNote("E", octave, 400);
     break;
   case 3: 
-    playNote("F", octave, 500);
+    playNote("F", octave, 400);
     break;
   case 4:
-    playNote("G", octave, 500);
+    playNote("G", octave, 400);
     break;
   case 5:
-    playNote("A", octave, 500);
+    playNote("A", octave, 400);
     break;
   case 6:
-    playNote("B", octave, 500);   
+    playNote("B", octave, 400);   
     break;
+  default:
+    Serial.println("note off");
+    noteOff(0, index+octave*12, 64);
+    MIDIUSB.flush();
   }
 }
 
 
 void color_to_note_sharp(int c){
+  Serial.println("PLAY SHARP");
   switch(c){
   case 0:
-    playNote("C#", octave, 300);
+    playNote("C#", octave, 400);
     break;
   case 1:
-    playNote("D#", octave, 300);
+    playNote("D#", octave, 400);
     break;
   case 2:
-    playNote("F", octave, 300);
+    playNote("F", octave, 400);
     break;
   case 3: 
-    playNote("F#", octave, 300);
+    playNote("F#", octave, 400);
     break;
   case 4:
-    playNote("G#", octave, 300);
+    playNote("G#", octave, 400);
     break;
   case 5:
-    playNote("A#", octave, 300);
+    playNote("A#", octave, 400);
     break;
   case 6:
-    playNote("C", octave + 1, 300);   
+    playNote("C", octave + 1, 400);   
     break;
+  default:
+    Serial.println("note off");
+    noteOff(0, index+octave*12, 64);
+    MIDIUSB.flush();
+
   }
 }
 
 void color_to_note_flat(int c){ // flat
+  Serial.println("PLAY FLAT");
   switch(c)
   {
   case 0:
-    playNote("B", octave - 1, 300);
+    playNote("B",octave - 1,  400);
     break;
   case 1:
-    playNote("C#", octave, 300);
+    playNote("C#", octave, 400);
     break;
   case 2:
-    playNote("D#", octave, 300);
+    playNote("D#", octave, 400);
     break;
   case 3: 
-    playNote("E", octave, 300);
+    playNote("E", octave, 400);
     break;
   case 4:
-    playNote("F#", octave, 300);
+    playNote("F#", octave, 400);
     break;
   case 5:
-    playNote("G#", octave, 300);
+    playNote("G#", octave, 400);
     break;
   case 6:
-    playNote("A#", octave, 300);   
+    playNote("A#", octave, 400);   
     break;
+  default:
+    Serial.println("note off");
+    noteOff(0, index+octave*12, 64);
+    MIDIUSB.flush();
   }
 }
