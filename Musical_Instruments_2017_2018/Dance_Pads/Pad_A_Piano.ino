@@ -113,6 +113,6 @@ void loop()
     Keyboard.release('s');
   }
   
-  delay(100);
+  delay(10);
 
 }
