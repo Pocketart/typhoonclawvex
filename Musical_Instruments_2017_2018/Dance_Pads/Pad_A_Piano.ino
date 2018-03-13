@@ -78,7 +78,7 @@ void loop()
     Keyboard.press('j');
   }
    else{
-    Keyboard.release('j');d
+    Keyboard.release('j');
   }
   
   if (valRide == 1)//bt3
