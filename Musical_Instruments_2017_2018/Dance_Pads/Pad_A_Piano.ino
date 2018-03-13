@@ -2,7 +2,6 @@
 #include <Keyboard.h>
 #include <MIDI.h>
 
-
 // Set up variables for dance pad input
 int bass= 2; 
 int hHat = 3;
@@ -36,10 +35,8 @@ void setup()
   pinMode(snare, INPUT);
   pinMode(lTom, INPUT);
   pinMode(crash, INPUT);
+ 
   //  setup serial
-  
-
-  
 }
 
 void loop()
@@ -53,40 +50,69 @@ void loop()
   valSnare = digitalRead(lTom);// read the input pin
   valhTom = digitalRead(crash);// read the input pin
 
-  if (valBass == 1)
+  if (valBass == 1)//bt5
   {
-    //Keyboard.write('a');
+    Keyboard.press('g');
   }
-  else if (valhHat == 1)
-  {
-    //Keyboard.write('s');
+  else{
+    Keyboard.release('g');
   }
-  else if (valhTom == 1)
-  {
-    //Keyboard.write('d');
-  }
-  else if (valmTom == 1)
-  {
-    //Keyboard.write('f');
-  }
-  else if (valRide == 1)
-  {
-    //Keyboard.write('g');
-  }
-  else if (valSnare == 1)
-  {
-    //Keyboard.write('h');
-  }
-  else if (vallTom == 1)
-  {
-    //Keyboard.write('j');
-  }
-  else if (valCrash == 1)
-  {
-    //Keyboard.write('k');
-  }
-
-  delay(220);
   
+  if (valhHat == 1)//bt4
+  {
+    Keyboard.press('f');
+  }
+   else{
+    Keyboard.release('f');
+  }
+  
+  if (valhTom == 1)//bt8
+  {
+    Keyboard.press('k');
+  }
+   else{
+    Keyboard.release('k');
+  }
+  if (valmTom == 1)//bt7
+  {
+    Keyboard.press('j');
+  }
+   else{
+    Keyboard.release('j');
+  }
+  
+  if (valRide == 1)//bt3
+  {
+    Keyboard.press('d');
+  }
+   else{
+    Keyboard.release('d');
+  }
+  
+  if (valSnare == 1)//bt1
+  {
+    Keyboard.press('a');
+  }
+   else{
+    Keyboard.release('a');
+  }
+  
+  if (vallTom == 1)//bt6
+  {
+    Keyboard.press('h');
+  }
+   else{
+    Keyboard.release('h');
+  }
+  
+  if (valCrash == 1)//bt2
+  {
+    Keyboard.press('s');
+  }
+   else{
+    Keyboard.release('s');
+  }
+  
+  delay(100);
 
 }

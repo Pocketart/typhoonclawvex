@@ -2,7 +2,6 @@
 #include <Keyboard.h>
 #include <MIDI.h>
 
-
 // Set up variables for dance pad input
 int bass= 2; 
 int hHat = 3;
@@ -36,10 +35,8 @@ void setup()
   pinMode(snare, INPUT);
   pinMode(lTom, INPUT);
   pinMode(crash, INPUT);
+ 
   //  setup serial
-  
-
-  
 }
 
 void loop()
@@ -53,40 +50,69 @@ void loop()
   valSnare = digitalRead(lTom);// read the input pin
   valhTom = digitalRead(crash);// read the input pin
 
-  if (valBass == 1)
+  if (valBass == 1)//This is actually Snare
   {
-    //Keyboard.write('a');
+    Keyboard.press('s');
   }
-  else if (valhHat == 1)
-  {
-    //Keyboard.write('s');
+  else{
+    Keyboard.release('s');
   }
-  else if (valhTom == 1)
-  {
-    //Keyboard.write('d');
-  }
-  else if (valmTom == 1)
-  {
-    //Keyboard.write('f');
-  }
-  else if (valRide == 1)
-  {
-    //Keyboard.write('g');
-  }
-  else if (valSnare == 1)
-  {
-    //Keyboard.write('h');
-  }
-  else if (vallTom == 1)
-  {
-    //Keyboard.write('j');
-  }
-  else if (valCrash == 1)
-  {
-    //Keyboard.write('k');
-  }
-
-  delay(220);
   
+  if (valhHat == 1)//This is actually Bass
+  {
+    Keyboard.press('a');
+  }
+   else{
+    Keyboard.release('a');
+  }
+  
+  if (valhTom == 1)//This is actually Crash
+  {
+    Keyboard.press('u');
+  }
+   else{
+    Keyboard.release('u');
+  }
+  if (valmTom == 1)//This is actually Low Tom
+  {
+    Keyboard.press('h');
+  }
+   else{
+    Keyboard.release('h');
+  }
+  
+  if (valRide == 1)//This is actually High Hat
+  {
+    Keyboard.press('t');
+  }
+   else{
+    Keyboard.release('t');
+  }
+  
+  if (valSnare == 1)//This is actually Ride
+  {
+    Keyboard.press('p');
+  }
+   else{
+    Keyboard.release('p');
+  }
+  
+  if (vallTom == 1)//This is actually High Tom
+  {
+    Keyboard.press('k');
+  }
+   else{
+    Keyboard.release('k');
+  }
+  
+  if (valCrash == 1)//This is actually Mid Tom
+  {
+    Keyboard.press('j');
+  }
+   else{
+    Keyboard.release('j');
+  }
+  
+  delay(100);
 
 }

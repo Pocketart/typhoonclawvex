@@ -1,4 +1,3 @@
-
 #include <Math.h>
 #include <MIDI.h>
 
@@ -139,4 +138,3 @@ void loop() {
   MIDIUSB.flush();
   delay(100);
 }
-
