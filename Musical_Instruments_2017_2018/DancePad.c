@@ -1,4 +1,6 @@
 #include <Math.h>
+#include <Keyboard.h>
+#include <MIDI.h>
 
 
 // Set up variables for dance pad input
@@ -51,25 +53,40 @@ void loop()
   valSnare = digitalRead(lTom);// read the input pin
   valhTom = digitalRead(crash);// read the input pin
 
-  
-  Serial.print("Bass button ");
-  Serial.println(valBass);
-  Serial.print("high hat ");
-  Serial.println(valhHat);
-  Serial.print("high tom ");
-  Serial.println(valhTom);
-  Serial.print("med tom ");
-  Serial.println(valmTom);
-  Serial.print("ride ");
-  Serial.println(valRide);
-  Serial.print("snare ");
-  Serial.println(valSnare); 
-  Serial.print("tome ");
-  Serial.println(vallTom); 
-  Serial.print("crash ");
-  Serial.println(valCrash);
-  Serial.println();
-  delay(100);
+  if (valBass == 1)
+  {
+    //Keyboard.write('a');
+  }
+  else if (valhHat == 1)
+  {
+    //Keyboard.write('s');
+  }
+  else if (valhTom == 1)
+  {
+    //Keyboard.write('d');
+  }
+  else if (valmTom == 1)
+  {
+    //Keyboard.write('f');
+  }
+  else if (valRide == 1)
+  {
+    //Keyboard.write('g');
+  }
+  else if (valSnare == 1)
+  {
+    //Keyboard.write('h');
+  }
+  else if (vallTom == 1)
+  {
+    //Keyboard.write('j');
+  }
+  else if (valCrash == 1)
+  {
+    //Keyboard.write('k');
+  }
+
+  delay(220);
   
 
 }
