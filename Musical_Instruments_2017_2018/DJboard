@@ -1,92 +1,140 @@
 #include <Math.h>
-#include <Keyboard.h>
 #include <MIDI.h>
 
+const int potIn1 = A1;
+const int potIn2 = A0;
+const int potIn3 = A2;
+const int potIn4 = A3;
+const int digIn1 = 2;
+const int digIn3 = 3;
+const int digIn4 = 4;
+const int digOut6 = 6;
+const int digOut7 = 7;
+const int digOut8 = 8;
 
-// Set up variables for dance pad input
-int bass= 2; 
-int hHat = 3;
-int hTom = 4;
-int mTom = 5;
-int ride = 6;
-int snare = 7;
-int lTom = 8;
-int crash = 9;
+int RawValue1 = 0;
+int RawValue2 = 0;
+int RawValue3 = 0;
+int RawValue4 = 0;
+int RawValueButton = 0;
+int sharp = 0;
+int flat = 0;
 
-// Set up default variables for input status
-int valBass = 0;
-int valhHat = 0;
-int valhTom = 0;
-int valmTom = 0;
-int valRide = 0;
-int valSnare = 0;
-int vallTom = 0;
-int valCrash = 0;
+int _note, _key, _range, _volume, tempnote, tempkey, temprange;
+int count=0;
+int now;
 
-// variable to store the value read
- 
-void setup()
-{
-  Serial.begin(9600);
-  pinMode(bass, INPUT); 
-  pinMode(hHat, INPUT);
-  pinMode(hTom, INPUT);
-  pinMode(mTom, INPUT);
-  pinMode(ride, INPUT);
-  pinMode(snare, INPUT);
-  pinMode(lTom, INPUT);
-  pinMode(crash, INPUT);
-  //  setup serial
-  
+int stepArr[] = {
+  0,2,4,5,7,9,11,12};
 
-  
+void noteOn(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity  };
+  MIDIUSB.write(noteOn);
 }
 
-void loop()
-{
-  valBass = digitalRead(bass);// read the input pin
-  valRide = digitalRead(hHat);// read the input pin
-  valCrash = digitalRead(hTom);// read the input pin
-  valmTom = digitalRead(mTom);// read the input pin
-  vallTom = digitalRead(ride);// read the input pin
-  valhHat = digitalRead(snare);// read the input pin
-  valSnare = digitalRead(lTom);// read the input pin
-  valhTom = digitalRead(crash);// read the input pin
+void noteOff(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity  };
+  MIDIUSB.write(noteOff);
+}
 
-  if (valBass == 1)
-  {
-    //Keyboard.write('a');
-  }
-  else if (valhHat == 1)
-  {
-    //Keyboard.write('s');
-  }
-  else if (valhTom == 1)
-  {
-    //Keyboard.write('d');
-  }
-  else if (valmTom == 1)
-  {
-    //Keyboard.write('f');
-  }
-  else if (valRide == 1)
-  {
-    //Keyboard.write('g');
-  }
-  else if (valSnare == 1)
-  {
-    //Keyboard.write('h');
-  }
-  else if (vallTom == 1)
-  {
-    //Keyboard.write('j');
-  }
-  else if (valCrash == 1)
-  {
-    //Keyboard.write('k');
-  }
+void playNote(int note, int t){
+  noteOn(0, note, 64);
+  MIDIUSB.flush();
+  delay(t);
 
-  delay(220);
+  noteOff(0, note, 64);
+  MIDIUSB.flush();
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(potIn1, INPUT);
+  pinMode(potIn2, INPUT);
+  pinMode(potIn3, INPUT);
+
+  pinMode(digIn1, INPUT);
+  pinMode(digIn3, INPUT);
+  pinMode(digIn4, INPUT);
   
+  pinMode(digOut6, OUTPUT);
+  pinMode(digOut7, OUTPUT);
+  pinMode(digOut8, OUTPUT);
+  
+  Serial.begin(9600);
+}
 
+void loop() {
+  // put your main code here, to run repeatedly: 
+  RawValue1 = analogRead(potIn1);
+  RawValue2 = analogRead(potIn2);
+  RawValue3 = analogRead(potIn3);
+
+  RawValueButton = digitalRead(digIn1);
+  sharp = digitalRead(digIn3);
+  flat = digitalRead(digIn4);
+  
+  _key = (int)(round((double)RawValue1/1023*11));
+  _range = (int)((double)RawValue3/1023*2+4);
+  _note = _key+stepArr[(int)(round((double)(1023-RawValue2)/1023*7))]+_range*12;
+  _note += sharp - flat;
+  
+  Serial.print(RawValueButton);
+  Serial.print(" ");
+  Serial.print(sharp);
+  Serial.print(" ");
+  Serial.println(flat);
+  
+  Serial.print(RawValue1);
+  Serial.print(" ");
+  Serial.print(1023-RawValue2);
+  Serial.print(" ");
+  Serial.println(RawValue3);
+  
+  Serial.print(_key);
+  Serial.print(" ");
+  Serial.print(_note);
+  Serial.print(" ");
+  Serial.println(_range);
+  
+  digitalWrite(digOut6, sharp);
+  digitalWrite(digOut8, flat);
+  
+  if(RawValueButton == LOW){
+    noteOn(0, _note, 100);
+    MIDIUSB.flush();
+    digitalWrite(digOut7, HIGH);
+    while(RawValueButton==LOW){
+      delay(1);
+      RawValueButton = digitalRead(digIn1);
+      RawValue1 = analogRead(potIn1);
+      RawValue2 = analogRead(potIn2);
+      RawValue3 = analogRead(potIn3);
+      sharp = digitalRead(digIn3);
+      flat = digitalRead(digIn4);
+      _key = (int)(round((double)RawValue1/1023*11));
+      _range = (int)((double)RawValue3/1023*2+4);
+      tempnote = _key+stepArr[(int)(round((double)(1023-RawValue2)/1023*7))]+_range*12;
+      tempnote += sharp - flat;
+      
+      digitalWrite(digOut6, sharp);
+      digitalWrite(digOut8, flat);
+      
+      if(tempnote!=_note){
+        Serial.println("CHANGED");
+        noteOff(0, _note, 100);
+        MIDIUSB.flush();
+        delay(1);
+        _note = tempnote;
+        noteOn(0, _note, 100);
+        MIDIUSB.flush();
+      }
+    }
+  } 
+  digitalWrite(digOut7, LOW); 
+
+  noteOff(0,_note,100);
+  MIDIUSB.flush();
+  delay(100);
 }
