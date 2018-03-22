@@ -13,8 +13,8 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPinSharp = 7; //yellow tape
-const int buttonPinFlat = 8;// the number of the pushbutton pin  //red tape
+const int buttonPinSharp = 8; //yellow tape
+const int buttonPinFlat = 7;// the number of the pushbutton pin  //red tape
 int buttonStateSharp = 0; 
 int buttonStateFlat = 0; // variable for reading the pushbutton status
 

@@ -2,7 +2,6 @@
 #include <pitchToNote.h>
 #include <frequencyToNote.h>
 #include <MIDIUSB.h>
-
 // Iron Man Gloves right hand (reverse)
 
 //#include <AltSoftSerial.h>
@@ -13,8 +12,8 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPinSharp = 7; //yellow tape
-const int buttonPinFlat = 8;// the number of the pushbutton pin  //red tape
+const int buttonPinSharp = 8; //yellow tape
+const int buttonPinFlat = 7;// the number of the pushbutton pin  //red tape
 int buttonStateSharp = 0; 
 int buttonStateFlat = 0; // variable for reading the pushbutton status
 
@@ -66,12 +65,12 @@ void loop() {
 
   buttonStateSharp = digitalRead(buttonPinSharp);
   buttonStateFlat = digitalRead(buttonPinFlat);
-  if (buttonStateSharp == HIGH) {
+  if (buttonStateSharp == LOW) {
     // turn LED on:
     Serial.println("flat");
     color_to_note_flat(color);
   } 
-  else if(buttonStateFlat == HIGH) {
+  else if(buttonStateFlat == LOW) {
     color_to_note_sharp(color);
     Serial.println("sharp");
   }
@@ -116,7 +115,7 @@ int get_colors(){
   long int ary[sizeRow][sizeCol] =
   { 
     {
-      193, 46, 44    }
+      183, 50, 44    }
     , // red
     {
       161, 68, 45    }
@@ -275,7 +274,7 @@ void color_to_note_flat(int c){ // flat
   switch(c)
   {
   case 0:
-    playNote("B",octave - 1,  400);
+    playNote("B", octave - 1,  400);
     break;
   case 1:
     playNote("C#", octave, 400);
