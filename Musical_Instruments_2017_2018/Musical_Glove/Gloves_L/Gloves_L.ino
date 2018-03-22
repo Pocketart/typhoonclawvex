@@ -66,12 +66,12 @@ void loop() {
 
   buttonStateSharp = digitalRead(buttonPinSharp);
   buttonStateFlat = digitalRead(buttonPinFlat);
-  if (buttonStateSharp == LOW) {
+  if (buttonStateSharp == HIGH) {
     // turn LED on:
     Serial.println("flat");
     color_to_note_flat(color);
   } 
-  else if(buttonStateFlat == LOW) {
+  else if(buttonStateFlat == HIGH) {
     color_to_note_sharp(color);
     Serial.println("sharp");
   }
