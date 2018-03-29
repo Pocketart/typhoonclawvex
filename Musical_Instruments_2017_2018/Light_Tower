@@ -1,0 +1,213 @@
+#include <Wire.h>
+#include <Math.h>
+#include <MIDI.h>
+#include <LCD.h>
+#include <LiquidCrystal_I2C.h>
+#define BACK_LIGHT 3
+#define I2C_ADDR 0x3F // <<----- Add your address here.  Find it from I2C Scanner
+#define En_pin  2
+#define Rw_pin  1
+#define Rs_pin  0
+#define D4_pin  4
+#define D5_pin  5
+#define D6_pin  6
+#define D7_pin  7
+//A0 = 18 
+//A1 = 19
+//A2 = 20
+//A3 = 21
+
+String relay_2d[2][16] = {
+  {
+    "10", "", "16" , "", "14", "", "15", "", "18","7","21","6","19","5","20","4"        }
+  ,
+  {
+    "", "", "" , "", "", "", "", "", "5","14","4","18","20","15","21","19"        }
+};
+
+String keyArr[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+
+LiquidCrystal_I2C lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin);
+
+const int trigPin = 10;
+const int echoPin = 16;
+const int inter_time = 1000;
+
+int height = 0;
+int note = 0, key = 0, now, lastnote = -1, count=0, time = 0, range = 5, num = 0;
+int stepArr[] = {
+  0,2,4,5,7,9,11,12};
+long duration, distance, duration2, distance2;
+
+void noteOn(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOn = {
+    0x09, 0x90 | channel, pitch, velocity        };
+  MIDIUSB.write(noteOn);
+}
+
+void noteOff(byte channel, byte pitch, byte velocity) {
+  MIDIEvent noteOff = {
+    0x08, 0x80 | channel, pitch, velocity        };
+  MIDIUSB.write(noteOff);
+}
+
+void playNote(int note){
+  noteOn(0, note, 64);
+  MIDIUSB.flush();
+}
+
+void displayLCD()
+{
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Key:" + String(keyArr[key]));
+  lcd.setCursor(0, 1);
+  lcd.print("Octave:" + String(range));
+  lcd.setCursor(8, 0);
+  lcd.print("Note:" + String(keyArr[note%12]));
+  delay(500);
+}
+
+void setup() {
+  //Wire.begin(8); // join i2c bus (address optional for master)pinMode ( BACKLIGHT_PIN, OUTPUT );
+  Serial.begin(9600);
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, INPUT);
+  pinMode(7, INPUT);
+  pinMode(8, INPUT);
+  pinMode(9, INPUT);
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(16, INPUT);
+  pinMode(10, OUTPUT);
+  //anaglog pin setup
+  pinMode(18, OUTPUT);
+  pinMode(19, OUTPUT);
+  pinMode(20, OUTPUT);
+  pinMode(21, OUTPUT);
+  lcd.begin (16,2); 
+  //cd.setBacklightPin(BACK_LIGHT, 1);
+  //lcd.setBacklight(HIGH);
+  delay(1000);
+  lcd.clear();
+  displayLCD();
+
+ // lcd.setCursor(1,1);
+  //lcd.print("O:" + range);
+}
+
+void loop() { 
+  //Test Relay
+  /*for(int j = 0; j < 2 ; j++){
+   for(int i = 0; i < 16; i++){
+   control_relay(j, i, 50);
+   }  
+   }
+   */
+  
+  
+  digitalWrite(trigPin, LOW);  
+  delayMicroseconds(2); 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10); 
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
+
+
+  if(digitalRead(0)==1 && key+1 < 12){
+      Serial.println("Increase 1 Key");
+      key++;
+      displayLCD();
+      //lcd.clear();
+      //lcd.print("Key: " + keyArr[key]);
+      for(int i = 7; i < 16 ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), LOW); 
+      }
+      for(int i = 8; i < 16  ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), HIGH);
+        delay(100); 
+      }
+    }
+
+  if(digitalRead(1)==1 && key-1 >= 0){
+      //lcd.clear();
+      Serial.println("Decrease 1 key");
+      key--;
+      displayLCD();
+      //lcd.print("Key: " + keyArr[key]);
+      for(int i = 7; i < 16 ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), LOW); 
+      }
+      for(int i = 15; i > 7  ; i--){
+        digitalWrite(relay_2d[1][i].toInt(), HIGH);
+        delay(100); 
+      }
+    }
+
+  if(digitalRead(8)==1 && range-1 >= 0){
+      Serial.println("Decrease 1 octive");
+      range --;
+      displayLCD();
+      for(int i = 7; i < 16 ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), LOW); 
+      }
+      for(int i = 15; i > 7  ; i--){
+        digitalWrite(relay_2d[1][i].toInt(), HIGH);
+        delay(100); 
+      }
+    }
+
+    if(digitalRead(9)==1 && range+1 <= 9){
+      Serial.println("Increase 1 octive");
+      range ++;
+      displayLCD();
+      for(int i = 7; i < 16 ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), LOW); 
+      }
+      for(int i = 8; i < 16  ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), HIGH);
+        delay(100); 
+      }
+    }    
+    num = (int)((double)(distance)/136*8);
+    note = key+stepArr[num]+range*12+(int)(digitalRead(7))-(int)(digitalRead(6));
+    if(distance < 136 && distance >= 0 && note != lastnote){
+      noteOff(0, lastnote, 64);
+      MIDIUSB.flush(); 
+      playNote(note);
+      lastnote = note;
+      control_relay(1, num+9, 5);
+      height = num+9;
+      displayLCD();
+    }
+    else if(distance > 136){
+      noteOff(0, lastnote, 64);
+      MIDIUSB.flush();
+      for(int i = 8; i < 16 ; i++){
+        digitalWrite(relay_2d[1][i].toInt(), LOW); 
+      }
+      lastnote = -20; 
+    }
+  // } 
+  Serial.println(num);
+  delay(100); 
+}
+
+void control_relay(int relay_f, int relay_num, int delay_sec){
+  //relay_f -> relay floor
+ 
+  for(int i = 8; i < relay_num ; i++){
+      digitalWrite(relay_2d[1][i].toInt(), HIGH);
+  }
+  for(int i = 15; i > relay_num-1; i--){
+    digitalWrite(relay_2d[1][i].toInt(), LOW);
+  }
+
+}
+
+
+
