@@ -1,3 +1,5 @@
+
+
 #include <pitchToFrequency.h>
 #include <pitchToNote.h>
 #include <frequencyToNote.h>
@@ -80,7 +82,7 @@ void loop() {
     Serial.println("normal");
 
   }
-  delay(400);
+ // delay(400);
 }
 
 int get_colors(){
