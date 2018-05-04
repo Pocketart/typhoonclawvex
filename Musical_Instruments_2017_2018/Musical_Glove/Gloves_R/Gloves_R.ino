@@ -1,8 +1,9 @@
+
+
 #include <pitchToFrequency.h>
 #include <pitchToNote.h>
 #include <frequencyToNote.h>
 #include <MIDIUSB.h>
-
 // Iron Man Gloves right hand (reverse)
 
 //#include <AltSoftSerial.h>
@@ -66,12 +67,12 @@ void loop() {
 
   buttonStateSharp = digitalRead(buttonPinSharp);
   buttonStateFlat = digitalRead(buttonPinFlat);
-  if (buttonStateSharp == HIGH) {
+  if (buttonStateSharp == LOW) {
     // turn LED on:
     Serial.println("flat");
     color_to_note_flat(color);
   } 
-  else if(buttonStateFlat == HIGH) {
+  else if(buttonStateFlat == LOW) {
     color_to_note_sharp(color);
     Serial.println("sharp");
   }
@@ -81,7 +82,7 @@ void loop() {
     Serial.println("normal");
 
   }
-  delay(400);
+ // delay(400);
 }
 
 int get_colors(){
@@ -116,7 +117,7 @@ int get_colors(){
   long int ary[sizeRow][sizeCol] =
   { 
     {
-      193, 46, 44    }
+      183, 50, 44    }
     , // red
     {
       161, 68, 45    }
@@ -275,7 +276,7 @@ void color_to_note_flat(int c){ // flat
   switch(c)
   {
   case 0:
-    playNote("B",octave - 1,  400);
+    playNote("B", octave - 1,  400);
     break;
   case 1:
     playNote("C#", octave, 400);
