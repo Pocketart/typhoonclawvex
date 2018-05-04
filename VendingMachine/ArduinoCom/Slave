@@ -1,0 +1,19 @@
+#include <Wire.h>
+int num = 0;
+
+void setup() {
+  // put your setup code here, to run once:
+  Wire.begin(8);
+  Wire.onReceive(receiveEvent);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly: 
+  delay(500);
+  Serial.println(num);
+}
+
+void receiveEvent(int x){  
+  num = Wire.read();
+}

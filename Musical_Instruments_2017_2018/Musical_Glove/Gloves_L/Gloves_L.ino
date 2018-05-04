@@ -13,10 +13,11 @@
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-const int buttonPinSharp = 7; //yellow tape
-const int buttonPinFlat = 8;// the number of the pushbutton pin  //red tape
+const int buttonPinSharp = 8; //yellow tape
+const int buttonPinFlat = 7;// the number of the pushbutton pin  //red tape
 int buttonStateSharp = 0; 
 int buttonStateFlat = 0; // variable for reading the pushbutton status
+int key = 0;
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
@@ -66,8 +67,8 @@ void loop() {
 
   buttonStateSharp = digitalRead(buttonPinSharp);
   buttonStateFlat = digitalRead(buttonPinFlat);
-  if (buttonStateSharp == LOW) {
-    // turn LED on:
+  keyChange();
+  if (buttonStateSharp == LOW) { // turn LED on:
     Serial.println("flat");
     color_to_note_flat(color);
   } 
@@ -81,8 +82,14 @@ void loop() {
     Serial.println("normal");
 
   }
-  delay(400);
+ // delay(400);
 }
+//button both pressed 
+
+
+
+  
+  
 
 int get_colors(){
   uint16_t clear, red, green, blue;
@@ -207,7 +214,12 @@ void playNote(String _note, int octave, int t){
 
 int octave = 3;
 void color_to_note_normal(int c) {
+  if(c!=-1){
   Serial.println("PLAY NORMAL");
+  c -= key;
+  if(c < 0){
+    c = 6 - key + 1;
+  }
   switch(c){
   case 0:
     playNote("C", octave, 400);
@@ -235,11 +247,17 @@ void color_to_note_normal(int c) {
     noteOff(0, index+octave*12, 64);
     MIDIUSB.flush();
   }
+  }
 }
 
 
 void color_to_note_sharp(int c){
+  if(c!=-1){
   Serial.println("PLAY SHARP");
+  c -= key;
+  if(c < 0){
+    c = 6 - key +1;
+  }
   switch(c){
   case 0:
     playNote("C#", octave, 400);
@@ -268,10 +286,16 @@ void color_to_note_sharp(int c){
     MIDIUSB.flush();
 
   }
+  }
 }
 
 void color_to_note_flat(int c){ // flat
   Serial.println("PLAY FLAT");
+  if(c!=-1){
+    c -= key;
+  if(c < 0){
+    c = 6 - key + 1;
+  }
   switch(c)
   {
   case 0:
@@ -300,4 +324,14 @@ void color_to_note_flat(int c){ // flat
     noteOff(0, index+octave*12, 64);
     MIDIUSB.flush();
   }
+  }
+  
+}
+int keyChange(){
+  if (buttonStateFlat == LOW && buttonStateSharp == LOW && get_colors() != -1)
+  {
+    key = get_colors();
+    Serial.println("key change");
+  }
+  return key;
 }
