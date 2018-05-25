@@ -1,19 +1,29 @@
 #include <Wire.h>
-int num = 0;
+char key;
+
+//Motor Pin
+#define enA 3
+#define in1 7
+#define in2 6
 
 void setup() {
   // put your setup code here, to run once:
   Wire.begin(8);
   Wire.onReceive(receiveEvent);
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly: 
-  delay(500);
-  Serial.println(num);
+  Serial.println(key);
+  analogWrite(enA, 255); 
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  delay(700);
 }
 
-void receiveEvent(int x){  
-  num = Wire.read();
+void receiveEvent(char x){  
+  key = Wire.read();
 }
