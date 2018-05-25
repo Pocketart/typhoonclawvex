@@ -1,0 +1,45 @@
+//Note: If unable to compile and the syntax is correct, switch the board type, compile, then switch back.
+
+const int spd = 255;  //max value 255, 100 is too low
+
+struct Motor
+{
+  int en;   //analog pin
+  int in1;  //digital pin 1
+  int in2;  //digital pin 2
+  int dur;  //specific motor duration for one retrieval
+};
+
+Motor motor1 = {A7, 5, 6, 1000};
+Motor motor2 = {A2, 3, 4, 1000};
+
+void initiate_motor(Motor m)
+{
+  pinMode(m.en, OUTPUT);
+  pinMode(m.in1, OUTPUT);
+  pinMode(m.in2, OUTPUT);
+  analogWrite(m.en, spd);
+}
+
+void retrieve(Motor m)
+{
+  digitalWrite(m.in1, HIGH);
+  digitalWrite(m.in2, LOW);
+  delay(m.dur);
+  digitalWrite(m.in1, LOW);
+}
+
+void setup() 
+{
+  // put your setup code here, to run once:
+  //Serial.begin(9600);
+  //Keyboard.begin();
+  initiate_motor(motor1);
+  initiate_motor(motor2);
+}
+
+void loop() 
+{
+  // put your main code here, to run repeatedly:
+  
+}
