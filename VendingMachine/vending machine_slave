@@ -1,0 +1,91 @@
+#include <Wire.h>
+#include <Keypad.h>
+
+char key;
+const byte ROWS = 4;
+const byte COLS = 4;
+const int spd = 255;  //max value 255, 100 is too low
+
+//motor3 2nd arduino
+#define enA 6
+#define in1 7
+#define in2 8
+
+//motor4 2nd arduino 
+#define enA2 5
+#define in3 4
+#define in4 0
+
+//motor5 2nd arduino
+#define enA5 9
+#define in5 16
+#define in6 14
+
+//motor6 2nd arduino 
+#define enA6 10
+#define in7 15
+#define in8 18
+
+void receiveEvent(char x){  
+  key = Wire.read();
+}
+
+void setup() {
+  Wire.begin(8);
+  Wire.onReceive(receiveEvent);
+  Serial.begin(9600);
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(enA2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+  analogWrite(enA, 255);
+  analogWrite(enA2, 255);
+
+  pinMode(enA5, OUTPUT);
+  pinMode(in5, OUTPUT);
+  pinMode(in6, OUTPUT);
+  pinMode(enA6, OUTPUT);
+  pinMode(in7, OUTPUT);
+  pinMode(in8, OUTPUT);
+  analogWrite(enA5, 255);
+  analogWrite(enA6, 255);
+}
+
+void loop() {
+  if(key == '3'){
+    analogWrite(enA, 255); 
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+    delay(600);
+    digitalWrite(in2, LOW);
+    key = ' ';
+  }
+  else if(key == '4'){
+    analogWrite(enA2, 255); 
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    delay(600);
+    digitalWrite(in4, LOW);
+    key = ' ';
+  }
+  else if(key == '5'){
+    Serial.println(5);
+    analogWrite(enA5, 255); 
+    digitalWrite(in5, LOW);
+    digitalWrite(in6, HIGH);
+    delay(600);
+    digitalWrite(in6, LOW);
+    key = ' ';
+  }
+  else if(key == '6'){
+    Serial.println(6);
+    analogWrite(enA6, 255); 
+    digitalWrite(in7, LOW);
+    digitalWrite(in8, HIGH);
+    delay(600);
+    digitalWrite(in8, LOW);
+    key = ' ';
+  }
+}
